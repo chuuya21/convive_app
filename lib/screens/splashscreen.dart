@@ -42,16 +42,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+  final cs = Theme.of(context).colorScheme;
+
   return Scaffold(
-    body: Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/img/splash_bg.png'), // your image path
-          fit: BoxFit.cover, // makes it fill the screen
-        ),
+    backgroundColor: cs.primary, // solid background color (theme primary)
+    body: Center(
+      child: Image.asset(
+        'assets/img/splash_logo.png', // your logo file
+        width: 140, // adjust as needed
+        fit: BoxFit.contain,
       ),
     ),
   );
 }
+
 
 }
