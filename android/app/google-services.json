@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "812873041446",
+    "project_id": "convive-app-3ec38",
+    "storage_bucket": "convive-app-3ec38.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:812873041446:android:15bac6d273e7506f4b88e7",
+        "android_client_info": {
+          "package_name": "com.example.convive_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "812873041446-dkr859r6cbene73ps94lbokgq5dv0gog.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.convive_app",
+            "certificate_hash": "9ad2f34d4f740155bc4a3b7f69a1426b2c33c1ce"
+          }
+        },
+        {
+          "client_id": "812873041446-5ig6emdp10qh0td1f86p90totm10ihli.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZfoLn6uGMGc23zqoPngWfWNTmB-D_Tx8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "812873041446-5ig6emdp10qh0td1f86p90totm10ihli.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
