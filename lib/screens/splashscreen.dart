@@ -42,21 +42,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      body: Center(
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 500),
-          opacity: opacity,
-          child: Text(
-            'Soy el Splashscreen',
-            style: TextStyle(
-              fontSize: 24,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
+  return Scaffold(
+    body: Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/img/splash_bg.png'), // your image path
+          fit: BoxFit.cover, // makes it fill the screen
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
