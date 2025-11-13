@@ -32,10 +32,10 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(builder: (_) => const HomeScreen()),
           );
         } else {
-          // No autenticado → a Login
+          // Usuario autenticado → a Home
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
           );
         }
       });

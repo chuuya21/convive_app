@@ -16,7 +16,7 @@ class EnviarSolicitudScreen extends StatefulWidget {
 
 class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _currentIndex = 0; // Inicio (EnviarSolicitudScreen)
+  int _currentIndex = 1; // Inicio (EnviarSolicitudScreen)
   
   // Variables para el formulario de Pedir Servicio
   String? _tipoAyudaSeleccionado;
@@ -57,14 +57,15 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
 
   void _onTabTapped(int index) {
     if (index == 0) {
-      // Inicio → se queda en EnviarSolicitudScreen
-      setState(() => _currentIndex = index);
-    } else if (index == 1) {
       // Explorar → HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
+      
+    } else if (index == 1) {
+      // Inicio → se queda en EnviarSolicitudScreen
+      setState(() => _currentIndex = index);
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
       Navigator.pushReplacement(
@@ -132,7 +133,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text('Pedir Servicio', style: TextStyle(color: Colors.white)),
+        title: const Text('Ofrecer Servicio', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),

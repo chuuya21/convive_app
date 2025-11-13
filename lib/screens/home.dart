@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedSegment = 0; // 0 = Pedir servicio, 1 = Ofrecer servicio
-  final int _currentBottomNavIndex = 1; // Explorar está activo (HomeScreen)
+  final int _currentBottomNavIndex = 0; // Explorar está activo (HomeScreen)
 
   // Datos de ejemplo para las solicitudes de servicio (Pedir servicio)
   final List<Map<String, dynamic>> _solicitudesServicio = [
@@ -82,14 +82,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onBottomNavTapped(int index) {
     if (index == 0) {
-      // Inicio → EnviarSolicitudScreen
+      // Explorar → se queda en HomeScreen
+      setState(() {});
+    } else if (index == 1) {
+// Inicio → EnviarSolicitudScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
       );
-    } else if (index == 1) {
-      // Explorar → se queda en HomeScreen
-      setState(() {});
+
+      
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
       Navigator.pushReplacement(

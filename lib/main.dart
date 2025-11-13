@@ -1,4 +1,4 @@
-import 'package:convive_app/screens/conversaciones_vecinos.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +15,12 @@ Future<void> main() async {
   try {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        
+        apiKey: "AIzaSyAUl-jBGmBBxf_UPjKnEOCV4SSMTfYqs1c",
+        authDomain: "convive-app-3ec38.firebaseapp.com",
+        projectId: "convive-app-3ec38",
+        storageBucket: "convive-app-3ec38.firebasestorage.app",
+        messagingSenderId: "812873041446",
+        appId: "1:812873041446:web:f4520f2f3f2d47084b88e7",
       ),
     );
   } on FirebaseException catch (e) {
@@ -42,20 +47,6 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
 
 
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: cs.secondary,
-      ),
-      body: const ConversacionesVecinosScreen(),
-    );
-  }
-}
 

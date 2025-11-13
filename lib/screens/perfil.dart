@@ -38,16 +38,16 @@ class _PerfilScreenState extends State<PerfilScreen>
 
   void _onBottomNavTapped(int index) {
     if (index == 0) {
-      // Inicio → EnviarSolicitudScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
-      );
-    } else if (index == 1) {
       // Explorar → HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    } else if (index == 1) {
+      // Inicio → EnviarSolicitudScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
       );
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
@@ -82,10 +82,7 @@ class _PerfilScreenState extends State<PerfilScreen>
       appBar: AppBar(
         backgroundColor: colorScheme.surface,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-          onPressed: () => Navigator.pop(context),
-        ),
+        
         title: Text(
           'Mi perfil',
           style: TextStyle(

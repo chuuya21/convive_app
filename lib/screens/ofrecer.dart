@@ -144,7 +144,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text('Pedir Servicio', style: TextStyle(color: Colors.white)),
+        title: const Text('Ofrecer Servicio', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
@@ -199,7 +199,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
           currentIndex: _currentIndex,
           onTap: _onTabTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF2196F3),
+          selectedItemColor: Theme.of(context).colorScheme.secondary,
           unselectedItemColor: Colors.grey,
           items: const [
             BottomNavigationBarItem(
@@ -320,7 +320,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFFFF9800) // Naranja cuando está seleccionado
+                          ?Theme.of(context).colorScheme.primary // Naranja cuando está seleccionado
                           : const Color(0xFFFFB74D), // Naranja claro
                       width: 2,
                     ),

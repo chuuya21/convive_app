@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:flutter_application_1/screens/home.dart';
 // import 'package:flutter_application_1/screens/products.dart';
 
 // import 'package:convive_app/screens/splashscreen.dart'; // comentado: no usado aquí
 // import 'package:convive_app/screens/ofrecer.dart';
 import 'package:convive_app/screens/home.dart';
+import 'package:convive_app/screens/perfil.dart';
+import 'package:convive_app/screens/enviar_solicitud.dart';
 // import 'package:convive_app/screens/enviar_solicitud.dart';
 // import 'package:convive_app/screens/products.dart';
 // import 'package:convive_app/screens/login.dart';
@@ -14,6 +17,8 @@ import 'package:convive_app/screens/home.dart';
 class ConversacionesVecinosScreen extends StatefulWidget {
   const ConversacionesVecinosScreen({super.key});
 
+  
+
   @override
   State<ConversacionesVecinosScreen> createState() =>
       _ConversacionesVecinosScreenState();
@@ -21,6 +26,76 @@ class ConversacionesVecinosScreen extends StatefulWidget {
 
 class _ConversacionesVecinosScreenState
     extends State<ConversacionesVecinosScreen> {
+
+      void _addContact(BuildContext context) async {
+    final nameController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 200),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 16), // espacio superior agregado
+                const Text(
+                  'Agregar contacto',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.all(16),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancelar'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimary,
+                      ),
+                      onPressed: () async {
+                        final name = nameController.text.trim();
+                        if (name.isNotEmpty) {
+                          await FirebaseFirestore.instance
+                              .collection('vecinos')
+                              .add({
+                                'name': name,
+                                'timestamp': FieldValue.serverTimestamp(),
+                              });
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Guardar'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
   int _selectedSegment = 1; // 0 = Comunidades, 1 = Vecinos
   final TextEditingController _searchController = TextEditingController();
   int _currentBottomNavIndex = 2; // Chats está activo
@@ -106,23 +181,28 @@ class _ConversacionesVecinosScreenState
 
   void _onBottomNavTapped(int index) {
     if (index == 0) {
-      // Inicio → HomeScreen
+      // Explorar → HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
+      
     } else if (index == 1) {
-      // Explorar → ProductsScreen
+      // Inicio → EnviarSolicitudScreen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()), //estp hay que cambiarlo dps
+        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
       );
     } else if (index == 2) {
       // Chats → se queda en ConversacionesVecinosScreen
       setState(() => _currentBottomNavIndex = index);
+      
     } else if (index == 3) {
-      // Mi Perfil → por ahora se queda
-      setState(() => _currentBottomNavIndex = index);
+      // Mi Perfil → PerfilScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const PerfilScreen()),
+      );
     }
   }
 
@@ -276,13 +356,16 @@ class _ConversacionesVecinosScreenState
               itemCount: _contactosFrecuentes.length + 1, // +1 para el botón "Añadir"
               itemBuilder: (context, index) {
                 if (index == 0) {
+                  
                   // Botón "Añadir"
                   return Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: Column(
+                      
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
+                          
                           width: 60,
                           height: 60,
                           decoration: BoxDecoration(
@@ -523,9 +606,9 @@ class _ConversacionesVecinosScreenState
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Acción para crear nueva conversación
-        },
+        
+          onPressed: () => _addContact(context),
+        
         backgroundColor: const Color(0xFF2196F3),
         child: const Icon(Icons.add, color: Colors.white),
       ),
