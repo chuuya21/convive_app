@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'descripcion': 'Enseño crochet para que tu gatito nunca tenga sus patitas frías. Aprender a tejer ropa abrigada para este invierno, enseñar los fines de semana 🧶',
       'categorias': ['Arte & Crochet', 'Mascotas'],
       'imagen': Icons.pets,
-      'color': Colors.orange,
+      'color': const Color(0xFFFF7B4A), // primary - se reemplazará dinámicamente
     },
     {
       'nombre': 'Usuario2',
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'descripcion': 'Cuidamos perritos en casa y los entrenamos para que tengan más oportunidades de ser adoptados. Lo recibimos por uno o dos meses 🐾❤️',
       'categorias': ['Mascotas', 'Entrenamiento', 'Temporal'],
       'imagen': Icons.pets,
-      'color': Colors.green,
+      'color': const Color(0xFF1ABEFF), // secondary - se reemplazará dinámicamente
     },
     {
       'nombre': 'Usuario3',
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'descripcion': '¿Necesitas ayuda con tu huerta? Puedo darte una mano con jardinería y estructuras hidropónicas. He trabajado en eso y quiero apoyar a alguien del barrio 🌱',
       'categorias': ['Jardineria', 'Ecología', 'Construcción'],
       'imagen': Icons.local_florist,
-      'color': Colors.brown,
+      'color': const Color(0xFF6B3DF0), // tertiary - se reemplazará dinámicamente
     },
   ];
 
@@ -79,13 +79,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF81CFFF), // Azul claro del header
+        backgroundColor: cs.secondary, // Azul claro del header
         elevation: 0,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Color(0xFF81CFFF),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: cs.secondaryContainer,
           statusBarIconBrightness: Brightness.dark,
         ),
         title: Column(
@@ -94,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Text(
               'Hola, Julian Gómez',
               style: TextStyle(
-                color: Colors.black87,
+                color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -105,13 +107,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Icon(
                   Icons.location_on,
                   size: 16,
-                  color: Colors.black87,
+                  color: Color.fromARGB(255, 237, 237, 237),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'Padre Hurtado Sur 1810',
                   style: TextStyle(
-                    color: Colors.grey[700],
+                    color: Color.fromARGB(255, 237, 237, 237),
                     fontSize: 12,
                   ),
                 ),
@@ -149,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         border: Border(
                           bottom: BorderSide(
                             color: _selectedSegment == 0
-                                ? Colors.orange
+                                ? cs.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -160,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _selectedSegment == 0
-                              ? Colors.orange
+                              ? cs.primary
                               : Colors.grey,
                           fontWeight: _selectedSegment == 0
                               ? FontWeight.w600
@@ -183,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         border: Border(
                           bottom: BorderSide(
                             color: _selectedSegment == 1
-                                ? Colors.orange
+                                ? cs.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -194,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _selectedSegment == 1
-                              ? Colors.orange
+                              ? cs.primary
                               : Colors.grey,
                           fontWeight: _selectedSegment == 1
                               ? FontWeight.w600
@@ -232,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
         },
-        backgroundColor: const Color(0xFF2196F3),
+        backgroundColor: cs.secondary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
       bottomNavigationBar: Container(
@@ -250,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
           currentIndex: _currentBottomNavIndex,
           onTap: _onBottomNavTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF2196F3),
+          selectedItemColor: cs.secondary,
           unselectedItemColor: Colors.grey,
           items: const [
             BottomNavigationBarItem(
@@ -276,6 +278,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSolicitudesList() {
+    final cs = Theme.of(context).colorScheme;
+    
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('solicitudes')
@@ -350,22 +354,22 @@ class _HomeScreenState extends State<HomeScreen> {
             switch (tipoAyuda) {
               case 'mascotas':
                 icono = Icons.pets;
-                color = Colors.blue;
+                color = cs.secondary;
                 labelTipo = 'Mascotas';
                 break;
               case 'mudanza':
                 icono = Icons.local_shipping;
-                color = Colors.orange;
+                color = cs.primary;
                 labelTipo = 'Mudanza';
                 break;
               case 'guardia':
                 icono = Icons.shield;
-                color = Colors.green;
+                color = cs.tertiary;
                 labelTipo = 'Guardia';
                 break;
               default:
                 icono = Icons.more_horiz;
-                color = Colors.purple;
+                color = cs.tertiary;
                 labelTipo = 'Otros';
             }
             
@@ -392,17 +396,35 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildOfertasList() {
+    final cs = Theme.of(context).colorScheme;
+    
+    // Actualizar colores de ofertas con el colorScheme
+    final ofertasConColores = _ofertasServicio.map((oferta) {
+      final colorIndex = _ofertasServicio.indexOf(oferta);
+      Color color;
+      if (colorIndex == 0) {
+        color = cs.primary;
+      } else if (colorIndex == 1) {
+        color = cs.secondary;
+      } else {
+        color = cs.tertiary;
+      }
+      return {...oferta, 'color': color};
+    }).toList();
+    
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: _ofertasServicio.length,
+      itemCount: ofertasConColores.length,
       itemBuilder: (context, index) {
-        final item = _ofertasServicio[index];
+        final item = ofertasConColores[index];
         return _buildCard(item, false);
       },
     );
   }
 
   Widget _buildCard(Map<String, dynamic> item, bool isSolicitud) {
+    final cs = Theme.of(context).colorScheme;
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -457,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.purple[100],
+                    color: cs.tertiaryContainer,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -465,7 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: Colors.purple[800],
+                      color: cs.tertiary,
                     ),
                   ),
                 ),
@@ -529,18 +551,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2196F3).withAlpha((0.1 * 255).round()),
+                          color: cs.secondary.withAlpha((0.1 * 255).round()),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: const Color(0xFF2196F3).withAlpha((0.3 * 255).round()),
+                            color: cs.secondary.withAlpha((0.3 * 255).round()),
                             width: 1,
                           ),
                         ),
                         child: Text(
                           categoria,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF2196F3),
+                            color: cs.secondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -590,7 +612,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: cs.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(

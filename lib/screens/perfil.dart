@@ -74,19 +74,18 @@ class _PerfilScreenState extends State<PerfilScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final cs = Theme.of(context).colorScheme;
     
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: cs.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: cs.surface,
         elevation: 0,
         
         title: Text(
           'Mi perfil',
           style: TextStyle(
-            color: colorScheme.onSurface,
+            color: cs.onSurface,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -94,7 +93,7 @@ class _PerfilScreenState extends State<PerfilScreen>
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: colorScheme.onSurface),
+            icon: Icon(Icons.settings, color: cs.onSurface),
             onPressed: () {
               // Acción para configuración
             },
@@ -117,7 +116,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                   height: 180,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: colorScheme.secondary,
+                    color: cs.secondary,
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(30),
                       bottomRight: Radius.circular(30),
@@ -133,7 +132,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                           width: 150,
                           height: 150,
                           decoration: BoxDecoration(
-                            color: colorScheme.secondaryContainer.withAlpha((0.2 * 255).round()),
+                            color: cs.secondaryContainer.withAlpha((0.2 * 255).round()),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -149,14 +148,14 @@ class _PerfilScreenState extends State<PerfilScreen>
                   child: Center(
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundColor: colorScheme.surface,
+                      backgroundColor: cs.surface,
                       child: CircleAvatar(
                         radius: 47,
-                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        backgroundColor: cs.surfaceContainerHighest,
                         child: Icon(
                           Icons.person,
                           size: 50,
-                          color: colorScheme.onSurfaceVariant,
+                          color: cs.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -171,7 +170,7 @@ class _PerfilScreenState extends State<PerfilScreen>
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
+                color: cs.onSurface,
               ),
             ),
             const SizedBox(height: 8),
@@ -179,7 +178,7 @@ class _PerfilScreenState extends State<PerfilScreen>
               'Miembro desde junio 2025',
               style: TextStyle(
                 fontSize: 14,
-                color: colorScheme.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 24),
@@ -193,17 +192,17 @@ class _PerfilScreenState extends State<PerfilScreen>
                       onPressed: () {
                         // Acción para editar perfil
                       },
-                      icon: Icon(Icons.edit, color: colorScheme.onSecondary, size: 18),
+                      icon: Icon(Icons.edit, color: cs.onSecondary, size: 18),
                       label: Text(
                         'Editar perfil',
                         style: TextStyle(
-                          color: colorScheme.onSecondary,
+                          color: cs.onSecondary,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.secondary,
+                        backgroundColor: cs.secondary,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -217,18 +216,18 @@ class _PerfilScreenState extends State<PerfilScreen>
                       onPressed: () {
                         // Acción para compartir
                       },
-                      icon: Icon(Icons.share, color: colorScheme.onSurfaceVariant, size: 18),
+                      icon: Icon(Icons.share, color: cs.onSurfaceVariant, size: 18),
                       label: Text(
                         'Compartir',
                         style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
+                          color: cs.onSurfaceVariant,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
-                        backgroundColor: colorScheme.surface,
-                        side: BorderSide(color: colorScheme.outline),
+                        backgroundColor: cs.surface,
+                        side: BorderSide(color: cs.outline),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -245,7 +244,7 @@ class _PerfilScreenState extends State<PerfilScreen>
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: colorScheme.surface,
+                color: cs.surface,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -259,7 +258,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+                          color: cs.onSurface,
                         ),
                       ),
                       TextButton(
@@ -270,7 +269,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                           'Ver todos',
                           style: TextStyle(
                             fontSize: 14,
-                            color: colorScheme.secondaryContainer,
+                            color: cs.secondaryContainer,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -286,7 +285,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                         "Progreso hacia 'Heroe vecinal'",
                         style: TextStyle(
                           fontSize: 12,
-                          color: colorScheme.onSurfaceVariant,
+                          color: cs.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -295,9 +294,9 @@ class _PerfilScreenState extends State<PerfilScreen>
                         child: LinearProgressIndicator(
                           value: 0.75,
                           minHeight: 8,
-                          backgroundColor: colorScheme.surfaceContainerHighest,
+                          backgroundColor: cs.surfaceContainerHighest,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.secondary,
+                            cs.secondary,
                           ),
                         ),
                       ),
@@ -320,12 +319,12 @@ class _PerfilScreenState extends State<PerfilScreen>
             const SizedBox(height: 24),
             // Tabs de navegación
             Container(
-              color: colorScheme.surface,
+              color: cs.surface,
               child: TabBar(
                 controller: _tabController,
-                indicatorColor: colorScheme.secondaryContainer,
-                labelColor: colorScheme.onSurface,
-                unselectedLabelColor: colorScheme.onSurfaceVariant,
+                indicatorColor: cs.secondaryContainer,
+                labelColor: cs.onSurface,
+                unselectedLabelColor: cs.onSurfaceVariant,
                 labelStyle: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -339,7 +338,7 @@ class _PerfilScreenState extends State<PerfilScreen>
             ),
             // Contenido de los tabs
             Container(
-              color: colorScheme.surface,
+              color: cs.surface,
               child: SizedBox(
                 height: 400,
                 child: TabBarView(
@@ -371,8 +370,8 @@ class _PerfilScreenState extends State<PerfilScreen>
           currentIndex: _currentBottomNavIndex,
           onTap: _onBottomNavTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: colorScheme.secondaryContainer,
-          unselectedItemColor: colorScheme.onSurfaceVariant,
+          selectedItemColor: cs.secondaryContainer,
+          unselectedItemColor: cs.onSurfaceVariant,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
@@ -397,15 +396,15 @@ class _PerfilScreenState extends State<PerfilScreen>
   }
 
   Widget _buildMedalla(BuildContext context, String nombre, bool obtenida) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     return Column(
       children: [
         CircleAvatar(
           radius: 30,
-          backgroundColor: obtenida ? colorScheme.secondary : colorScheme.surfaceContainerHighest,
+          backgroundColor: obtenida ? cs.secondary : cs.surfaceContainerHighest,
           child: Icon(
             Icons.star,
-            color: obtenida ? colorScheme.onSecondary : colorScheme.onSurfaceVariant,
+            color: obtenida ? cs.onSecondary : cs.onSurfaceVariant,
             size: 24,
           ),
         ),
@@ -417,7 +416,7 @@ class _PerfilScreenState extends State<PerfilScreen>
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 11,
-              color: colorScheme.onSurfaceVariant,
+              color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
             maxLines: 2,
@@ -429,7 +428,7 @@ class _PerfilScreenState extends State<PerfilScreen>
   }
 
   Widget _buildInformacionTab() {
-    final colorScheme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -441,13 +440,13 @@ class _PerfilScreenState extends State<PerfilScreen>
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
+              color: cs.onSurface,
             ),
           ),
           const SizedBox(height: 16),
           _buildInfoItem(context, Icons.location_on, 'Dirección', 'Av. Fernando Castillo Velasco'),
           const SizedBox(height: 16),
-          _buildInfoItem(context, Icons.email, 'Email', 'Julian.gomezzz@email.com'),
+          _buildInfoItem(context, Icons.email, 'Email', 'Julian.gomezzz@gmail.com'),
           const SizedBox(height: 16),
           _buildInfoItem(context, Icons.phone, 'Teléfono', '+569 6123 6795'),
           const SizedBox(height: 32),
@@ -460,7 +459,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
+                  color: cs.onSurface,
                 ),
               ),
               TextButton(
@@ -471,7 +470,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                   'Editar',
                   style: TextStyle(
                     fontSize: 14,
-                    color: colorScheme.secondaryContainer,
+                    color: cs.secondaryContainer,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -500,7 +499,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
+                  color: cs.onSurface,
                 ),
               ),
               TextButton(
@@ -511,7 +510,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                   'Editar',
                   style: TextStyle(
                     fontSize: 14,
-                    color: colorScheme.secondaryContainer,
+                    color: cs.secondaryContainer,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -537,33 +536,33 @@ class _PerfilScreenState extends State<PerfilScreen>
   }
 
   Widget _buildComunidadTab() {
-    final colorScheme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     return Center(
       child: Text(
         'Contenido de Comunidad',
-        style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
+        style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
       ),
     );
   }
 
   Widget _buildActividadTab() {
-    final colorScheme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     return Center(
       child: Text(
         'Contenido de Actividad',
-        style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
+        style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
       ),
     );
   }
 
   Widget _buildInfoItem(BuildContext context, IconData icon, String label, String value) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
         CircleAvatar(
           radius: 20,
-          backgroundColor: colorScheme.surfaceContainerHighest,
-          child: Icon(icon, color: colorScheme.onSurfaceVariant, size: 20),
+          backgroundColor: cs.surfaceContainerHighest,
+          child: Icon(icon, color: cs.onSurfaceVariant, size: 20),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -574,7 +573,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: colorScheme.onSurfaceVariant,
+                  color: cs.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 4),
@@ -582,7 +581,7 @@ class _PerfilScreenState extends State<PerfilScreen>
                 value,
                 style: TextStyle(
                   fontSize: 16,
-                  color: colorScheme.onSurface,
+                  color: cs.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -594,18 +593,18 @@ class _PerfilScreenState extends State<PerfilScreen>
   }
 
   Widget _buildTag(BuildContext context, String text) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
+        color: cs.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 14,
-          color: colorScheme.onSurfaceVariant,
+          color: cs.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
       ),

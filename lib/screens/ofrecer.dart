@@ -141,9 +141,11 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: cs.primary,
         title: const Text('Ofrecer Servicio', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
@@ -182,7 +184,8 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: _publicarSolicitud,
-        child: const Icon(Icons.check),
+        backgroundColor: cs.secondary,
+        child: const Icon(Icons.check, color: Colors.white),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -199,7 +202,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
           currentIndex: _currentIndex,
           onTap: _onTabTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Theme.of(context).colorScheme.secondary,
+          selectedItemColor: cs.secondary,
           unselectedItemColor: Colors.grey,
           items: const [
             BottomNavigationBarItem(
@@ -226,6 +229,8 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
   }
 
   Widget _buildBody() {
+    final cs = Theme.of(context).colorScheme;
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -236,7 +241,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD), // Azul claro
+              color: cs.secondaryContainer, // Azul claro
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: Row(
@@ -245,8 +250,8 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF4A90E2),
+                  decoration: BoxDecoration(
+                    color: cs.secondary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -320,8 +325,8 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
                       color: isSelected
-                          ?Theme.of(context).colorScheme.primary // Naranja cuando está seleccionado
-                          : const Color(0xFFFFB74D), // Naranja claro
+                          ? cs.primary // Naranja cuando está seleccionado
+                          : cs.primaryContainer, // Naranja claro
                       width: 2,
                     ),
                   ),
@@ -332,8 +337,8 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                         tipo['icon'] as IconData,
                         size: 40,
                         color: isSelected
-                            ? const Color(0xFFFF9800)
-                            : const Color(0xFFFFB74D),
+                            ? cs.primary
+                            : cs.primaryContainer,
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -379,7 +384,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: Color(0xFF4A90E2), width: 2),
+                borderSide: BorderSide(color: cs.secondary, width: 2),
               ),
             ),
           ),
@@ -417,7 +422,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: Color(0xFF4A90E2), width: 2),
+                borderSide: BorderSide(color: cs.secondary, width: 2),
               ),
             ),
           ),
@@ -461,7 +466,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                     _esUrgente = value;
                   });
                 },
-                activeThumbColor: const Color(0xFF9C27B0), // Morado
+                activeThumbColor: cs.tertiary, // Morado
               ),
             ],
           ),
@@ -474,7 +479,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
             child: ElevatedButton(
               onPressed: _publicarSolicitud,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF9800), // Naranja
+                backgroundColor: cs.primary, // Naranja
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),

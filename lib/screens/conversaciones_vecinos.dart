@@ -28,6 +28,7 @@ class _ConversacionesVecinosScreenState
     extends State<ConversacionesVecinosScreen> {
 
       void _addContact(BuildContext context) async {
+    final cs = Theme.of(context).colorScheme;
     final nameController = TextEditingController();
 
     await showDialog(
@@ -66,10 +67,8 @@ class _ConversacionesVecinosScreenState
                     const SizedBox(width: 8),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(
-                          context,
-                        ).colorScheme.onPrimary,
+                        backgroundColor: cs.primary,
+                        foregroundColor: cs.onPrimary,
                       ),
                       onPressed: () async {
                         final name = nameController.text.trim();
@@ -135,10 +134,12 @@ class _ConversacionesVecinosScreenState
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFE3F2FD), // Azul claro de fondo
+      backgroundColor: cs.secondaryContainer, // Azul claro de fondo
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2196F3), // Azul del header
+        backgroundColor: cs.secondary, // Azul del header
         elevation: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -163,8 +164,8 @@ class _ConversacionesVecinosScreenState
           ],
         ),
         centerTitle: true,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Color(0xFF2196F3),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: cs.secondary,
           statusBarIconBrightness: Brightness.light,
         ),
       ),
@@ -189,7 +190,7 @@ class _ConversacionesVecinosScreenState
                         border: Border(
                           bottom: BorderSide(
                             color: _selectedSegment == 0
-                                ? Colors.orange
+                                ? cs.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -200,7 +201,7 @@ class _ConversacionesVecinosScreenState
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _selectedSegment == 0
-                              ? Colors.orange
+                              ? cs.primary
                               : Colors.grey,
                           fontWeight: _selectedSegment == 0
                               ? FontWeight.w600
@@ -223,7 +224,7 @@ class _ConversacionesVecinosScreenState
                         border: Border(
                           bottom: BorderSide(
                             color: _selectedSegment == 1
-                                ? Colors.orange
+                                ? cs.primary
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -234,7 +235,7 @@ class _ConversacionesVecinosScreenState
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: _selectedSegment == 1
-                              ? Colors.orange
+                              ? cs.primary
                               : Colors.grey,
                           fontWeight: _selectedSegment == 1
                               ? FontWeight.w600
@@ -283,6 +284,7 @@ class _ConversacionesVecinosScreenState
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
+                final cs = Theme.of(context).colorScheme;
                 if (snapshot.hasError) {
                   return const Center(
                     child: Text(
@@ -322,7 +324,7 @@ class _ConversacionesVecinosScreenState
                                 width: 60,
                                 height: 60,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF2196F3),
+                                  color: cs.secondary,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -350,14 +352,14 @@ class _ConversacionesVecinosScreenState
                     final name = data['name'] ?? 'Sin nombre';
                     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
 
-                    // Colores para los avatares
+                    // Colores para los avatares usando el tema
                     final colors = [
-                      Colors.blue,
-                      Colors.green,
-                      Colors.orange,
-                      Colors.purple,
-                      Colors.red,
-                      Colors.teal,
+                      cs.secondary,
+                      cs.primary,
+                      cs.tertiary,
+                      cs.secondaryContainer,
+                      cs.primaryContainer,
+                      cs.tertiaryContainer,
                     ];
                     final color = colors[index % colors.length];
 
@@ -419,6 +421,7 @@ class _ConversacionesVecinosScreenState
                     .orderBy('timestamp', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
+                  final cs = Theme.of(context).colorScheme;
                   if (snapshot.hasError) {
                     return const Center(
                       child: Padding(
@@ -473,16 +476,16 @@ class _ConversacionesVecinosScreenState
                         }
                       }
 
-                      // Colores para los avatares
+                      // Colores para los avatares usando el tema
                       final colors = [
-                        Colors.blue,
-                        Colors.green,
-                        Colors.orange,
-                        Colors.purple,
-                        Colors.red,
-                        Colors.teal,
-                        Colors.indigo,
-                        Colors.pink,
+                        cs.secondary,
+                        cs.primary,
+                        cs.tertiary,
+                        cs.secondaryContainer,
+                        cs.primaryContainer,
+                        cs.tertiaryContainer,
+                        cs.secondary,
+                        cs.primary,
                       ];
                       final color = colors[index % colors.length];
 
@@ -581,10 +584,8 @@ class _ConversacionesVecinosScreenState
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        
-          onPressed: () => _addContact(context),
-        
-        backgroundColor: const Color(0xFF2196F3),
+        onPressed: () => _addContact(context),
+        backgroundColor: cs.secondary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
       bottomNavigationBar: Container(
@@ -602,7 +603,7 @@ class _ConversacionesVecinosScreenState
           currentIndex: _currentBottomNavIndex,
           onTap: _onBottomNavTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF2196F3),
+          selectedItemColor: cs.secondary,
           unselectedItemColor: Colors.grey,
           items: const [
             BottomNavigationBarItem(
