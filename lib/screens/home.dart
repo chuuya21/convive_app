@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convive_app/screens/enviar_solicitud.dart';
 // import 'package:convive_app/screens/products.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
@@ -17,37 +18,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedSegment = 0; // 0 = Pedir servicio, 1 = Ofrecer servicio
   final int _currentBottomNavIndex = 0; // Explorar está activo (HomeScreen)
-
-  // Datos de ejemplo para las solicitudes de servicio (Pedir servicio)
-  final List<Map<String, dynamic>> _solicitudesServicio = [
-    {
-      'nombre': 'Helga suarez',
-      'tiempo': 'Hace 5 horas',
-      'ubicacion': 'casa 202 C',
-      'descripcion': 'Quiero aprender a hacer crochet para mi gato calvo que esta pasandola muy mal este invierno. Si alguién tuviese el tiempo entre findes de semana seria perfecto para mi.',
-      'categorias': ['Arte & Crochet', 'Mascotas'],
-      'imagen': Icons.pets,
-      'color': Colors.purple,
-    },
-    {
-      'nombre': 'Usuario2',
-      'tiempo': 'Hace dos horas',
-      'ubicacion': 'Casa 233 B',
-      'descripcion': 'Encontre este perrito afuera del condominio. Es un perrito sin entrenamiento de aprox 3 años. Necesito conseguirle una casa temporal aunque sea por 1 mes.',
-      'categorias': ['Mascotas', 'Adopción', 'Ayuda Temporal'],
-      'imagen': Icons.pets,
-      'color': Colors.blue,
-    },
-    {
-      'nombre': 'Miguel ángel Soto',
-      'tiempo': 'Hace 1 día',
-      'ubicacion': 'casa 206 D',
-      'descripcion': 'Estoy Tratando de hacer una huerta hidropónica pero no logró que crezcan mis lechugas, alguién me podría ayudar que sepa en jardineria y construcción.',
-      'categorias': ['Jardineria', 'Ecología', 'Construcción'],
-      'imagen': Icons.local_florist,
-      'color': Colors.green,
-    },
-  ];
 
   // Datos de ejemplo para las ofertas de servicio
   final List<Map<String, dynamic>> _ofertasServicio = [
@@ -122,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Hola, Julian123',
+              'Hola, Julian Gómez',
               style: TextStyle(
                 color: Colors.black87,
                 fontSize: 18,
@@ -240,212 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Lista de solicitudes u ofertas según el segmento seleccionado
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _selectedSegment == 0 
-                  ? _solicitudesServicio.length 
-                  : _ofertasServicio.length,
-              itemBuilder: (context, index) {
-                final item = _selectedSegment == 0 
-                    ? _solicitudesServicio[index]
-                    : _ofertasServicio[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header del card con perfil
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundColor: item['color'] as Color,
-                              child: const Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item['nombre'] as String,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '${item['tiempo']} | ${item['ubicacion']}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Badge según el tipo
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.purple[100],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                _selectedSegment == 0 
-                                    ? 'Pedir servicio'
-                                    : 'Ofrecer servicio',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.purple[800],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Descripción
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          item['descripcion'] as String,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[800],
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Imagen placeholder
-                      Container(
-                        height: 200,
-                        width: double.infinity,
-                        color: Colors.grey[200],
-                        child: Icon(
-                          item['imagen'] as IconData,
-                          size: 60,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Categorías
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: (item['categorias'] as List<String>)
-                              .map((categoria) => Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF2196F3).withAlpha((0.1 * 255).round()),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: const Color(0xFF2196F3).withAlpha((0.3 * 255).round()),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      categoria,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFF2196F3),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Acciones (like, comentario, compartir)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.favorite_border,
-                                  color: Colors.grey),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.chat_bubble_outline,
-                                  color: Colors.grey),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.share, color: Colors.grey),
-                              onPressed: () {},
-                            ),
-                            const Spacer(),
-                          ],
-                        ),
-                      ),
-
-                      // Botón "Ver detalles"
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const DetalleSolicitudScreen(),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: const Text(
-                              'Ver detalles',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+            child: _selectedSegment == 0
+                ? _buildSolicitudesList()
+                : _buildOfertasList(),
           ),
         ],
       ),
@@ -504,6 +271,343 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSolicitudesList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('solicitudes')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text('Error al cargar solicitudes: ${snapshot.error}'),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final docs = snapshot.data!.docs;
+
+        if (docs.isEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('No hay solicitudes aún'),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final doc = docs[index];
+            final data = doc.data() as Map<String, dynamic>;
+            
+            // Mapear datos de Firebase
+            final tipoAyuda = data['tipoAyuda'] ?? 'otros';
+            final titulo = data['titulo'] ?? 'Sin título';
+            final detalles = data['detalles'] ?? 'Sin detalles';
+            final userEmail = data['userEmail'] ?? 'Usuario desconocido';
+            final timestamp = data['timestamp'] as Timestamp?;
+            
+            // Formatear tiempo relativo
+            String tiempoTexto = 'Recién publicado';
+            if (timestamp != null) {
+              final fecha = timestamp.toDate();
+              final ahora = DateTime.now();
+              final diferencia = ahora.difference(fecha);
+              
+              if (diferencia.inDays == 0) {
+                if (diferencia.inHours == 0) {
+                  tiempoTexto = 'Hace ${diferencia.inMinutes} minutos';
+                } else {
+                  tiempoTexto = 'Hace ${diferencia.inHours} horas';
+                }
+              } else if (diferencia.inDays == 1) {
+                tiempoTexto = 'Hace 1 día';
+              } else {
+                tiempoTexto = 'Hace ${diferencia.inDays} días';
+              }
+            }
+            
+            // Mapear tipo de ayuda a icono y color
+            IconData icono;
+            Color color;
+            String labelTipo;
+            
+            switch (tipoAyuda) {
+              case 'mascotas':
+                icono = Icons.pets;
+                color = Colors.blue;
+                labelTipo = 'Mascotas';
+                break;
+              case 'mudanza':
+                icono = Icons.local_shipping;
+                color = Colors.orange;
+                labelTipo = 'Mudanza';
+                break;
+              case 'guardia':
+                icono = Icons.shield;
+                color = Colors.green;
+                labelTipo = 'Guardia';
+                break;
+              default:
+                icono = Icons.more_horiz;
+                color = Colors.purple;
+                labelTipo = 'Otros';
+            }
+            
+            // Nombre fijo para todas las publicaciones
+            final nombreUsuario = 'Julian Gómez';
+            
+            final item = {
+              'id': doc.id,
+              'nombre': nombreUsuario,
+              'tiempo': tiempoTexto,
+              'ubicacion': 'Vecindario',
+              'descripcion': detalles,
+              'titulo': titulo,
+              'categorias': [labelTipo],
+              'imagen': icono,
+              'color': color,
+            };
+            
+            return _buildCard(item, true);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildOfertasList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _ofertasServicio.length,
+      itemBuilder: (context, index) {
+        final item = _ofertasServicio[index];
+        return _buildCard(item, false);
+      },
+    );
+  }
+
+  Widget _buildCard(Map<String, dynamic> item, bool isSolicitud) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header del card con perfil
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: item['color'] as Color,
+                  child: const Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['nombre'] as String,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${item['tiempo']} | ${item['ubicacion']}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Badge según el tipo
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.purple[100],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    isSolicitud ? 'Pedir servicio' : 'Ofrecer servicio',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.purple[800],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Título (si existe)
+          if (item.containsKey('titulo') && item['titulo'] != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                item['titulo'] as String,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+
+          // Descripción
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              item['descripcion'] as String,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[800],
+                height: 1.4,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Imagen placeholder
+          Container(
+            height: 200,
+            width: double.infinity,
+            color: Colors.grey[200],
+            child: Icon(
+              item['imagen'] as IconData,
+              size: 60,
+              color: Colors.grey[400],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Categorías
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: (item['categorias'] as List<String>)
+                  .map((categoria) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2196F3).withAlpha((0.1 * 255).round()),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFF2196F3).withAlpha((0.3 * 255).round()),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          categoria,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF2196F3),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Acciones (like, comentario, compartir)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.favorite_border,
+                      color: Colors.grey),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.chat_bubble_outline,
+                      color: Colors.grey),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: const Icon(Icons.share, color: Colors.grey),
+                  onPressed: () {},
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
+
+          // Botón "Ver detalles"
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DetalleSolicitudScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Ver detalles',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

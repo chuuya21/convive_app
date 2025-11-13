@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convive_app/screens/login.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
@@ -92,7 +92,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     }
   }
 
-  void _publicarSolicitud() {
+  void _publicarSolicitud() async {
     if (_tipoAyudaSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -120,12 +120,48 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
       return;
     }
 
-    // Aquí puedes agregar la lógica para publicar la solicitud en Firestore
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Solicitud publicada exitosamente'),
-      ),
-    );
+    try {
+      // Obtener el usuario actual
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid ?? '';
+      final userEmail = user?.email ?? '';
+
+      // Guardar la solicitud en Firestore
+      await FirebaseFirestore.instance.collection('solicitudes').add({
+        'tipoAyuda': _tipoAyudaSeleccionado,
+        'titulo': _tituloController.text.trim(),
+        'detalles': _detallesController.text.trim(),
+        'userId': userId,
+        'userEmail': userEmail,
+        'timestamp': FieldValue.serverTimestamp(),
+        'estado': 'pendiente', // pendiente, en_proceso, completada
+      });
+
+      // Limpiar los campos después de guardar
+      setState(() {
+        _tipoAyudaSeleccionado = null;
+        _tituloController.clear();
+        _detallesController.clear();
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Solicitud publicada exitosamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al publicar la solicitud: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -133,7 +169,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text('Ofrecer Servicio', style: TextStyle(color: Colors.white)),
+        title: const Text('Pedir Servicio', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),

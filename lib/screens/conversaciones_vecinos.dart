@@ -100,83 +100,10 @@ class _ConversacionesVecinosScreenState
   final TextEditingController _searchController = TextEditingController();
   int _currentBottomNavIndex = 2; // Chats está activo
 
-  // Datos de ejemplo para contactos frecuentes
-  final List<Map<String, dynamic>> _contactosFrecuentes = [
-    {
-      'nombre': 'Contacto1',
-      'avatar': Icons.person,
-      'mensajesNoLeidos': 2,
-      'color': Colors.blue,
-    },
-    {
-      'nombre': 'Contacto2',
-      'avatar': Icons.person,
-      'mensajesNoLeidos': 6,
-      'color': Colors.green,
-    },
-    {
-      'nombre': 'Contacto3',
-      'avatar': Icons.person,
-      'mensajesNoLeidos': 5,
-      'color': Colors.orange,
-    },
-  ];
-
-  // Datos de ejemplo para conversaciones
-  final List<Map<String, dynamic>> _conversaciones = [
-    {
-      'nombre': 'Contacto1',
-      'ultimoMensaje': 'Salgamos a trotar mañana! Hace...',
-      'hora': '10:06 AM',
-      'estado': 'online', // online, away, offline
-      'mensajesNoLeidos': 2,
-      'avatar': Icons.person,
-      'color': Colors.blue,
-    },
-    {
-      'nombre': 'Contacto2',
-      'ultimoMensaje': 'Has visto a mi gatito? Lo perdi el sá...',
-      'hora': '10:06 AM',
-      'estado': 'away',
-      'mensajesNoLeidos': 6,
-      'avatar': Icons.person,
-      'color': Colors.green,
-    },
-    {
-      'nombre': 'Contacto3',
-      'ultimoMensaje': 'Me prestas tu aspiradora por favor?',
-      'hora': '10:06 AM',
-      'estado': 'offline',
-      'mensajesNoLeidos': 0,
-      'avatar': Icons.person,
-      'color': Colors.orange,
-    },
-    {
-      'nombre': 'Contacto4',
-      'ultimoMensaje': 'Cuidado vecino hay un joven sospe...',
-      'hora': '10:06 AM',
-      'estado': 'online',
-      'mensajesNoLeidos': 1,
-      'avatar': Icons.person,
-      'color': Colors.purple,
-    },
-  ];
-
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  Color _getEstadoColor(String estado) {
-    switch (estado) {
-      case 'online':
-        return Colors.green;
-      case 'away':
-        return Colors.orange;
-      default:
-        return Colors.grey;
-    }
   }
 
   void _onBottomNavTapped(int index) {
@@ -350,105 +277,131 @@ class _ConversacionesVecinosScreenState
             height: 100,
             color: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _contactosFrecuentes.length + 1, // +1 para el botón "Añadir"
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  
-                  // Botón "Añadir"
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: Column(
-                      
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2196F3),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Añadir',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('vecinos')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      'Error al cargar contactos',
+                      style: TextStyle(fontSize: 12),
                     ),
                   );
                 }
 
-                final contacto = _contactosFrecuentes[index - 1];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Stack(
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                }
+
+                final docs = snapshot.data!.docs;
+
+                return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: docs.length + 1, // +1 para el botón "Añadir"
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      // Botón "Añadir"
+                      return GestureDetector(
+                        onTap: () => _addContact(context),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2196F3),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Añadir',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    final doc = docs[index - 1];
+                    final data = doc.data() as Map<String, dynamic>;
+                    final name = data['name'] ?? 'Sin nombre';
+                    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+
+                    // Colores para los avatares
+                    final colors = [
+                      Colors.blue,
+                      Colors.green,
+                      Colors.orange,
+                      Colors.purple,
+                      Colors.red,
+                      Colors.teal,
+                    ];
+                    final color = colors[index % colors.length];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             width: 60,
                             height: 60,
                             decoration: BoxDecoration(
-                              color: contacto['color'] as Color,
+                              color: color,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
-                              contacto['avatar'] as IconData,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ),
-                          if (contacto['mensajesNoLeidos'] > 0)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF2196F3),
-                                  shape: BoxShape.circle,
-                                ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 20,
-                                  minHeight: 20,
-                                ),
-                                child: Text(
-                                  '${contacto['mensajesNoLeidos']}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
+                            child: Center(
+                              child: Text(
+                                initial,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
+                          ),
+                          const SizedBox(height: 4),
+                          SizedBox(
+                            width: 60,
+                            child: Text(
+                              name,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        contacto['nombre'] as String,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),
@@ -460,144 +413,166 @@ class _ConversacionesVecinosScreenState
           Expanded(
             child: Container(
               color: Colors.white,
-              child: ListView.builder(
-                itemCount: _conversaciones.length,
-                itemBuilder: (context, index) {
-                  final conversacion = _conversaciones[index];
-                  return InkWell(
-                    onTap: () {
-                      // Navegar a la conversación individual
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('vecinos')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text('Error al cargar contactos'),
                       ),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey[200]!,
-                            width: 0.5,
+                    );
+                  }
+
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  final docs = snapshot.data!.docs;
+
+                  if (docs.isEmpty) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text('No hay contactos aún'),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final doc = docs[index];
+                      final data = doc.data() as Map<String, dynamic>;
+                      final name = data['name'] ?? 'Sin nombre';
+                      final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+                      final timestamp = data['timestamp'] as Timestamp?;
+                      
+                      // Formatear la fecha/hora
+                      String horaTexto = '';
+                      if (timestamp != null) {
+                        final fecha = timestamp.toDate();
+                        final ahora = DateTime.now();
+                        final diferencia = ahora.difference(fecha);
+                        
+                        if (diferencia.inDays == 0) {
+                          // Hoy: mostrar hora
+                          horaTexto = '${fecha.hour.toString().padLeft(2, '0')}:${fecha.minute.toString().padLeft(2, '0')}';
+                        } else if (diferencia.inDays == 1) {
+                          horaTexto = 'Ayer';
+                        } else if (diferencia.inDays < 7) {
+                          horaTexto = '${diferencia.inDays}d';
+                        } else {
+                          horaTexto = '${fecha.day}/${fecha.month}';
+                        }
+                      }
+
+                      // Colores para los avatares
+                      final colors = [
+                        Colors.blue,
+                        Colors.green,
+                        Colors.orange,
+                        Colors.purple,
+                        Colors.red,
+                        Colors.teal,
+                        Colors.indigo,
+                        Colors.pink,
+                      ];
+                      final color = colors[index % colors.length];
+
+                      return InkWell(
+                        onTap: () {
+                          // Navegar a la conversación individual
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
                           ),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          // Avatar
-                          Stack(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey[200]!,
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: Row(
                             children: [
+                              // Avatar
                               Container(
                                 width: 50,
                                 height: 50,
                                 decoration: BoxDecoration(
-                                  color: conversacion['color'] as Color,
+                                  color: color,
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
-                                  conversacion['avatar'] as IconData,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
-                              ),
-                              // Indicador de estado
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  width: 14,
-                                  height: 14,
-                                  decoration: BoxDecoration(
-                                    color: _getEstadoColor(
-                                      conversacion['estado'] as String,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
+                                child: Center(
+                                  child: Text(
+                                    initial,
+                                    style: const TextStyle(
                                       color: Colors.white,
-                                      width: 2,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               ),
+                              const SizedBox(width: 12),
+                              // Contenido
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            name,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        if (horaTexto.isNotEmpty)
+                                          Text(
+                                            horaTexto,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Toca para iniciar conversación',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[700],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
-                          const SizedBox(width: 12),
-                          // Contenido
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        conversacion['nombre'] as String,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black87,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    Text(
-                                      conversacion['hora'] as String,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        conversacion['ultimoMensaje'] as String,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[700],
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ),
-                                    if (conversacion['mensajesNoLeidos'] > 0)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 2,
-                                        ),
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFF2196F3),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        constraints: const BoxConstraints(
-                                          minWidth: 20,
-                                          minHeight: 20,
-                                        ),
-                                        child: Text(
-                                          '${conversacion['mensajesNoLeidos']}',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
