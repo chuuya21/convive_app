@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-// import 'package:convive_app/screens/splashscreen.dart';
-import 'package:convive_app/screens/conversaciones_vecinos.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convive_app/screens/login.dart';
-// import 'package:convive_app/theme/theme.dart';
-
+import 'package:convive_app/screens/home.dart';
+import 'package:convive_app/screens/conversaciones_vecinos.dart';
+// import 'package:convive_app/screens/products.dart';
+import 'package:convive_app/screens/perfil.dart';
+import 'package:convive_app/screens/confirmacion_ofrecer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class OfrecerScreen extends StatefulWidget {
   const OfrecerScreen({super.key});
@@ -17,12 +17,13 @@ class OfrecerScreen extends StatefulWidget {
 
 class _OfrecerScreenState extends State<OfrecerScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _currentIndex = 0; // Home (HomeScreen)
+  int _currentIndex = 0; // Inicio (OfrecerScreen)
   
   // Variables para el formulario de Pedir Servicio
   String? _tipoAyudaSeleccionado;
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _detallesController = TextEditingController();
+  bool _esUrgente = false;
 
   final List<Map<String, dynamic>> _tiposAyuda = [
     {
@@ -46,30 +47,6 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
       'value': 'otros',
     },
   ];
-  // Selección de duración/tiempo (segunda sección que antes reutilizaba _tiposAyuda)
-  String? _duracionSeleccionada;
-  final List<Map<String, dynamic>> _tiposDuracion = [
-    {
-      'icon': Icons.timer,
-      'label': 'Tiempo completo',
-      'value': 'fulltime',
-    },
-    {
-      'icon': Icons.schedule,
-      'label': 'Medio tiempo',
-      'value': 'parttime',
-    },
-    {
-      'icon': Icons.hourglass_bottom,
-      'label': 'Fines de semana',
-      'value': 'finde',
-    },
-    {
-      'icon': Icons.sync,
-      'label': 'Por horas',
-      'value': 'horas',
-    },
-  ];
   
   @override
   void dispose() {
@@ -81,13 +58,13 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
 
   void _onTabTapped(int index) {
     if (index == 0) {
-      // Inicio → se queda en HomeScreen
+      // Inicio → se queda en OfrecerScreen
       setState(() => _currentIndex = index);
     } else if (index == 1) {
-      // Explorar → ProductsScreen
+      // Explorar → HomeScreen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const OfrecerScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
@@ -96,8 +73,11 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
         MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()),
       );
     } else if (index == 3) {
-      // Mi Perfil → por ahora se queda
-      setState(() => _currentIndex = index);
+      // Mi Perfil → PerfilScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const PerfilScreen()),
+      );
     }
   }
 
@@ -112,130 +92,92 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
     }
   }
 
-  void _publicarSolicitud() async {
-    // Validaciones
+  void _publicarSolicitud() {
     if (_tipoAyudaSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor selecciona un tipo de ayuda')),
-      );
-      return;
-    }
-
-    if (_duracionSeleccionada == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor selecciona una disponibilidad')),
+        const SnackBar(
+          content: Text('Por favor selecciona un tipo de ayuda'),
+        ),
       );
       return;
     }
 
     if (_tituloController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa un título')),
+        const SnackBar(
+          content: Text('Por favor ingresa un título'),
+        ),
       );
       return;
     }
 
     if (_detallesController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa los detalles')),
+        const SnackBar(
+          content: Text('Por favor ingresa los detalles'),
+        ),
       );
       return;
     }
 
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Debes iniciar sesión primero')),
-        );
-        return;
-      }
+    // Obtener el nombre de la categoría seleccionada
+    final categoriaNombre = _tiposAyuda.firstWhere(
+      (tipo) => tipo['value'] == _tipoAyudaSeleccionado,
+      orElse: () => {'label': 'Otros'},
+    )['label'] as String;
 
-      // Crear documento en Firestore
-      final data = {
-        'usuarioId': user.uid,
-        'email': user.email,
-        'tipo': _tipoAyudaSeleccionado,
-        'duracion': _duracionSeleccionada,
-        'titulo': _tituloController.text.trim(),
-        'detalles': _detallesController.text.trim(),
-        'fechaCreacion': FieldValue.serverTimestamp(),
-      };
-
-      // Debug info: print payload and target project
-      // ignore: avoid_print
-      print('Firestore: intentando agregar documento a servicios_ofrecidos: $data');
-
-      final docRef = await FirebaseFirestore.instance.collection('servicios_ofrecidos').add(data);
-
-      // Debug info: document id
-      // ignore: avoid_print
-      print('Firestore: documento agregado con id: ${docRef.id}');
-
-      // Limpiar formulario
-      if (mounted) {
-        _tituloController.clear();
-        _detallesController.clear();
-        setState(() {
-          _tipoAyudaSeleccionado = null;
-          _duracionSeleccionada = null;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('¡Servicio publicado exitosamente!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } on FirebaseException catch (e) {
-      // Firebase-specific errors (permission-denied, unavailable, etc.)
-      // ignore: avoid_print
-      print('FirebaseException al publicar: code=${e.code} message=${e.message}');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al publicar (Firebase): ${e.code}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      // Other errors
-      // ignore: avoid_print
-      print('Error inesperado al publicar: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al publicar: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+    // Navegar a la pantalla de confirmación
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ConfirmacionOfrecerScreen(
+          tituloServicio: _tituloController.text.trim(),
+          descripcionServicio: _detallesController.text.trim(),
+          categoriaServicio: categoriaNombre,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  backgroundColor: Theme.of(context).colorScheme.primary,
-  title: const Text(
-    'Ofrecer Servicio',
-    style: TextStyle(color: Colors.white),
-  ),
-  leading: IconButton(
-    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-    onPressed: () => Navigator.pop(context),
-  ),
-  actions: [
-    IconButton(
-      icon: const Icon(Icons.logout, color: Colors.white),
-      onPressed: _signOut,
-    ),
-  ],
-),
-
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text('Pedir Servicio', style: TextStyle(color: Colors.white)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: _signOut,
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const OfrecerScreen()),
+                );
+              },
+              child: AbsorbPointer(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Buscar productos...',
+                    fillColor: Colors.white,
+                    filled: true,
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
@@ -319,7 +261,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '¡Comparte tus habilidades!',
+                        '¡Hola Vecino!',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -328,7 +270,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Ayuda a tus vecinos ofreciendo tus servicios y habiludades. Juntos hacemos una comunidad más fuerte.',
+                        'Estamos aquí para ayudarte. Cuéntanos qué necesitas y te conectaremos con vecinos dispuestos a echarte una mano.',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[700],
@@ -344,7 +286,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
 
           // Sección: Tipo de ayuda
           const Text(
-            '¿Qué tipo de servicio ofreces? *',
+            '¿Qué tipo de ayuda necesitas? *',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -412,7 +354,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
 
           // Campo: Título breve
           const Text(
-            'Título de tu servicio*',
+            'Título breve de tu solicitud *',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -423,7 +365,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
           TextField(
             controller: _tituloController,
             decoration: InputDecoration(
-              hintText: 'Ej: Hola vecinos! ofrezco paseos de perro...',
+              hintText: 'Ej: Necesito ayuda para pasear mi perro',
               hintStyle: TextStyle(color: Colors.grey[400]),
               filled: true,
               fillColor: Colors.white,
@@ -445,7 +387,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
 
           // Campo: Detalles
           const Text(
-            'Describe tu servicio *',
+            'Cuéntanos más detalles *',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -461,7 +403,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
               setState(() {}); // Actualizar el contador
             },
             decoration: InputDecoration(
-              hintText: 'Me ofrezco para pasear perros en el vecindario.',
+              hintText: '¿Qué necesitas exactamente? ¿Cuando lo necesitas? ¿Dónde?',
               hintStyle: TextStyle(color: Colors.grey[400]),
               filled: true,
               fillColor: Colors.white,
@@ -500,71 +442,30 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Sección: Tipo de servicio (duración/tiempo)
-          const Text(
-            '¿Qué tipo de servicio ofreces? *',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.2,
-            ),
-            itemCount: _tiposDuracion.length,
-            itemBuilder: (context, index) {
-              final tipo = _tiposDuracion[index];
-              final isSelected = _duracionSeleccionada == tipo['value'];
-
-              return InkWell(
-                onTap: () {
+          // Toggle: Solicitud urgente
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Solicitud urgente',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+              Switch(
+                value: _esUrgente,
+                onChanged: (value) {
                   setState(() {
-                    _duracionSeleccionada = tipo['value'];
+                    _esUrgente = value;
                   });
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFF4CAF50) // Verde cuando está seleccionado
-                          : Colors.grey.shade300,
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        tipo['icon'] as IconData,
-                        size: 36,
-                        color: isSelected ? const Color(0xFF4CAF50) : Colors.grey[700],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tipo['label'] as String,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+                activeThumbColor: const Color(0xFF9C27B0), // Morado
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
           // Botón: Publicar Solicitud
           SizedBox(

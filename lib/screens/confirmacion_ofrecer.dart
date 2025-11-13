@@ -22,7 +22,7 @@ class ConfirmacionOfrecerScreen extends StatefulWidget {
 }
 
 class _ConfirmacionOfrecerScreenState extends State<ConfirmacionOfrecerScreen> {
-  int _currentBottomNavIndex = 0; // Inicio está activo
+  final int _currentBottomNavIndex = 0; // Inicio está activo
 
   void _onBottomNavTapped(int index) {
     if (index == 0) {

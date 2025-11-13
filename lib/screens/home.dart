@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:flutter/services.dart';
 import 'package:convive_app/screens/enviar_solicitud.dart';
 // import 'package:convive_app/screens/products.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
-// import 'package:convive_app/screens/detalle_solicitud.dart';
+import 'package:convive_app/screens/detalle_solicitud.dart';
 import 'package:convive_app/screens/perfil.dart';
-// import 'package:convive_app/screens/ofrecer.dart';
-import 'package:convive_app/screens/login.dart';
+import 'package:convive_app/screens/ofrecer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,47 +15,72 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  int _currentIndex = 0; // Home (HomeScreen)
-  
-  // Variables para el formulario de Pedir Servicio
-  String? _tipoAyudaSeleccionado;
-  final TextEditingController _tituloController = TextEditingController();
-  final TextEditingController _detallesController = TextEditingController();
-  bool _esUrgente = false;
+  int _selectedSegment = 0; // 0 = Pedir servicio, 1 = Ofrecer servicio
+  final int _currentBottomNavIndex = 1; // Explorar está activo (HomeScreen)
 
-  final List<Map<String, dynamic>> _tiposAyuda = [
+  // Datos de ejemplo para las solicitudes de servicio (Pedir servicio)
+  final List<Map<String, dynamic>> _solicitudesServicio = [
     {
-      'icon': Icons.pets,
-      'label': 'Mascotas',
-      'value': 'mascotas',
+      'nombre': 'Helga suarez',
+      'tiempo': 'Hace 5 horas',
+      'ubicacion': 'casa 202 C',
+      'descripcion': 'Quiero aprender a hacer crochet para mi gato calvo que esta pasandola muy mal este invierno. Si alguién tuviese el tiempo entre findes de semana seria perfecto para mi.',
+      'categorias': ['Arte & Crochet', 'Mascotas'],
+      'imagen': Icons.pets,
+      'color': Colors.purple,
     },
     {
-      'icon': Icons.local_shipping,
-      'label': 'Mudanza',
-      'value': 'mudanza',
+      'nombre': 'Usuario2',
+      'tiempo': 'Hace dos horas',
+      'ubicacion': 'Casa 233 B',
+      'descripcion': 'Encontre este perrito afuera del condominio. Es un perrito sin entrenamiento de aprox 3 años. Necesito conseguirle una casa temporal aunque sea por 1 mes.',
+      'categorias': ['Mascotas', 'Adopción', 'Ayuda Temporal'],
+      'imagen': Icons.pets,
+      'color': Colors.blue,
     },
     {
-      'icon': Icons.shield,
-      'label': 'Guardia',
-      'value': 'guardia',
-    },
-    {
-      'icon': Icons.more_horiz,
-      'label': 'Otros...',
-      'value': 'otros',
+      'nombre': 'Miguel ángel Soto',
+      'tiempo': 'Hace 1 día',
+      'ubicacion': 'casa 206 D',
+      'descripcion': 'Estoy Tratando de hacer una huerta hidropónica pero no logró que crezcan mis lechugas, alguién me podría ayudar que sepa en jardineria y construcción.',
+      'categorias': ['Jardineria', 'Ecología', 'Construcción'],
+      'imagen': Icons.local_florist,
+      'color': Colors.green,
     },
   ];
-  
-  @override
-  void dispose() {
-    _tituloController.dispose();
-    _detallesController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
 
-  void _onTabTapped(int index) {
+  // Datos de ejemplo para las ofertas de servicio
+  final List<Map<String, dynamic>> _ofertasServicio = [
+    {
+      'nombre': 'Usuario1',
+      'tiempo': 'Hace 5 horas',
+      'ubicacion': 'casa 202 C',
+      'descripcion': 'Enseño crochet para que tu gatito nunca tenga sus patitas frías. Aprender a tejer ropa abrigada para este invierno, enseñar los fines de semana 🧶',
+      'categorias': ['Arte & Crochet', 'Mascotas'],
+      'imagen': Icons.pets,
+      'color': Colors.orange,
+    },
+    {
+      'nombre': 'Usuario2',
+      'tiempo': 'Hace dos horas',
+      'ubicacion': 'Casa 233 B',
+      'descripcion': 'Cuidamos perritos en casa y los entrenamos para que tengan más oportunidades de ser adoptados. Lo recibimos por uno o dos meses 🐾❤️',
+      'categorias': ['Mascotas', 'Entrenamiento', 'Temporal'],
+      'imagen': Icons.pets,
+      'color': Colors.green,
+    },
+    {
+      'nombre': 'Usuario3',
+      'tiempo': 'Hace 1 día',
+      'ubicacion': 'casa 206 D',
+      'descripcion': '¿Necesitas ayuda con tu huerta? Puedo darte una mano con jardinería y estructuras hidropónicas. He trabajado en eso y quiero apoyar a alguien del barrio 🌱',
+      'categorias': ['Jardineria', 'Ecología', 'Construcción'],
+      'imagen': Icons.local_florist,
+      'color': Colors.brown,
+    },
+  ];
+
+  void _onBottomNavTapped(int index) {
     if (index == 0) {
       // Inicio → EnviarSolicitudScreen
       Navigator.pushReplacement(
@@ -67,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } else if (index == 1) {
       // Explorar → se queda en HomeScreen
-      setState(() => _currentIndex = index);
+      setState(() {});
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
       Navigator.pushReplacement(
@@ -83,102 +105,371 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _signOut() async {
-    await FirebaseAuth.instance.signOut();
-    if (mounted) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-        (route) => false,
-      );
-    }
-  }
-
-  void _publicarSolicitud() {
-    if (_tipoAyudaSeleccionado == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor selecciona un tipo de ayuda'),
-        ),
-      );
-      return;
-    }
-
-    if (_tituloController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor ingresa un título'),
-        ),
-      );
-      return;
-    }
-
-    if (_detallesController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor ingresa los detalles'),
-        ),
-      );
-      return;
-    }
-
-    // Aquí puedes agregar la lógica para publicar la solicitud en Firestore
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Solicitud publicada exitosamente'),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text('Pedir Servicio', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF81CFFF), // Azul claro del header
+        elevation: 0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Color(0xFF81CFFF),
+          statusBarIconBrightness: Brightness.dark,
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Hola, Julian123',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  size: 16,
+                  color: Colors.black87,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Padre Hurtado Sur 1810',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: _signOut,
+            icon: const Icon(Icons.more_vert, color: Colors.black87),
+            onPressed: () {
+              // Acción para menú de opciones
+            },
           ),
         ],
-        // bottom: PreferredSize( ESTO ES EL BUSCADOR QUE NO USAMOS PERO LO DEJO AQUÍ por si lo necesitamos mas adelante
-        //   preferredSize: const Size.fromHeight(56),
-        //   child: Padding(
-        //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        //     child: GestureDetector(
-        //       onTap: () {
-        //         Navigator.pushReplacement(
-        //           context,
-        //           MaterialPageRoute(builder: (_) => const HomeScreen()),
-        //         );
-        //       },
-        //       child: AbsorbPointer(
-        //         child: TextField(
-        //           controller: _searchController,
-        //           decoration: InputDecoration(
-        //             hintText: 'Buscar productos...',
-        //             fillColor: Colors.white,
-        //             filled: true,
-        //             prefixIcon: const Icon(Icons.search),
-        //             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ),
-      backgroundColor: Colors.grey[50],
-      body: _buildBody(),
+      body: Column(
+        children: [
+          // Control segmentado
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedSegment = 0;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: _selectedSegment == 0
+                                ? Colors.orange
+                                : Colors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        'Pedir servicio',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _selectedSegment == 0
+                              ? Colors.orange
+                              : Colors.grey,
+                          fontWeight: _selectedSegment == 0
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedSegment = 1;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: _selectedSegment == 1
+                                ? Colors.orange
+                                : Colors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        'Ofrecer servicio',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _selectedSegment == 1
+                              ? Colors.orange
+                              : Colors.grey,
+                          fontWeight: _selectedSegment == 1
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Lista de solicitudes u ofertas según el segmento seleccionado
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _selectedSegment == 0 
+                  ? _solicitudesServicio.length 
+                  : _ofertasServicio.length,
+              itemBuilder: (context, index) {
+                final item = _selectedSegment == 0 
+                    ? _solicitudesServicio[index]
+                    : _ofertasServicio[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header del card con perfil
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: item['color'] as Color,
+                              child: const Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item['nombre'] as String,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${item['tiempo']} | ${item['ubicacion']}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Badge según el tipo
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.purple[100],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                _selectedSegment == 0 
+                                    ? 'Pedir servicio'
+                                    : 'Ofrecer servicio',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.purple[800],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Descripción
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          item['descripcion'] as String,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[800],
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Imagen placeholder
+                      Container(
+                        height: 200,
+                        width: double.infinity,
+                        color: Colors.grey[200],
+                        child: Icon(
+                          item['imagen'] as IconData,
+                          size: 60,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Categorías
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: (item['categorias'] as List<String>)
+                              .map((categoria) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF2196F3).withAlpha((0.1 * 255).round()),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: const Color(0xFF2196F3).withAlpha((0.3 * 255).round()),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      categoria,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF2196F3),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Acciones (like, comentario, compartir)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.favorite_border,
+                                  color: Colors.grey),
+                              onPressed: () {},
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.chat_bubble_outline,
+                                  color: Colors.grey),
+                              onPressed: () {},
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.share, color: Colors.grey),
+                              onPressed: () {},
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
+                      ),
+
+                      // Botón "Ver detalles"
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const DetalleSolicitudScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Ver detalles',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _publicarSolicitud,
-        child: const Icon(Icons.check),
+        onPressed: () {
+          if (_selectedSegment == 0) {
+            // Pedir servicio → EnviarSolicitudScreen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
+            );
+          } else {
+            // Ofrecer servicio → OfrecerScreen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const OfrecerScreen()),
+            );
+          }
+        },
+        backgroundColor: const Color(0xFF2196F3),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
-              BoxShadow(
+            BoxShadow(
               color: Colors.grey.withAlpha((0.3 * 255).round()),
               spreadRadius: 1,
               blurRadius: 5,
@@ -187,8 +478,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onTabTapped,
+          currentIndex: _currentBottomNavIndex,
+          onTap: _onBottomNavTapped,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: const Color(0xFF2196F3),
           unselectedItemColor: Colors.grey,
@@ -212,341 +503,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-
-    );
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Tarjeta de mensaje introductorio
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD), // Azul claro
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF4A90E2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.info_outline,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '¡Comparte tus habilidades!',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Ayuda a tus vecinos ofreciendo tus servicios y habiludades. Juntos hacemos una comunidad más fuerte.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Sección: Tipo de ayuda
-          const Text(
-            '¿Qué tipo de servicio ofreces? *',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.2,
-            ),
-            itemCount: _tiposAyuda.length,
-            itemBuilder: (context, index) {
-              final tipo = _tiposAyuda[index];
-              final isSelected = _tipoAyudaSeleccionado == tipo['value'];
-
-              return InkWell(
-                onTap: () {
-                  setState(() {
-                    _tipoAyudaSeleccionado = tipo['value'];
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFFFF9800) // Naranja cuando está seleccionado
-                          : const Color(0xFFFFB74D), // Naranja claro
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        tipo['icon'] as IconData,
-                        size: 40,
-                        color: isSelected
-                            ? const Color(0xFFFF9800)
-                            : const Color(0xFFFFB74D),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tipo['label'] as String,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-
-          // Campo: Título breve
-          const Text(
-            'Título de tu servicio*',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _tituloController,
-            decoration: InputDecoration(
-              hintText: 'Ej: Hola vecinos! ofrezco paseos de perro...',
-              hintStyle: TextStyle(color: Colors.grey[400]),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: Color(0xFF4A90E2), width: 2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Campo: Detalles
-          const Text(
-            'Describe tu servicio *',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _detallesController,
-            maxLines: 5,
-            maxLength: 500,
-            onChanged: (value) {
-              setState(() {}); // Actualizar el contador
-            },
-            decoration: InputDecoration(
-              hintText: 'Me ofrezco para pasear perros en el vecindario.',
-              hintStyle: TextStyle(color: Colors.grey[400]),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(color: Color(0xFF4A90E2), width: 2),
-              ),
-            ),
-          ),
-          /* Contador de caracteres (comentado — duplicado en ofrecer.dart)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Se específico pero breve',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              Text(
-                '${_detallesController.text.length}/500',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-          */
-          const SizedBox(height: 24),
-
-          // Sección: Tipo de ayuda
-          const Text(
-            '¿Qué tipo de servicio ofreces? *',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A1A1A),
-            ),
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.2,
-            ),
-            itemCount: _tiposAyuda.length,
-            itemBuilder: (context, index) {
-              final tipo = _tiposAyuda[index];
-              final isSelected = _tipoAyudaSeleccionado == tipo['value'];
-
-              return InkWell(
-                onTap: () {
-                  setState(() {
-                    _tipoAyudaSeleccionado = tipo['value'];
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFFFF9800) // Naranja cuando está seleccionado
-                          : const Color(0xFFFFB74D), // Naranja claro
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        tipo['icon'] as IconData,
-                        size: 40,
-                        color: isSelected
-                            ? const Color(0xFFFF9800)
-                            : const Color(0xFFFFB74D),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tipo['label'] as String,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-
-          // Botón: Publicar Solicitud
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: _publicarSolicitud,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF9800), // Naranja
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                elevation: 2,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    'Publicar Solicitud',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward, size: 20),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-}
-
-class PlaceholderScreen extends StatelessWidget {
-  const PlaceholderScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Pantalla "Otros" aún no implementada')),
     );
   }
 }
