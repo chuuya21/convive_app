@@ -27,71 +27,239 @@ class ConversacionesVecinosScreen extends StatefulWidget {
 class _ConversacionesVecinosScreenState
     extends State<ConversacionesVecinosScreen> {
 
-      void _addContact(BuildContext context) async {
+  void _addContact(BuildContext context) async {
     final cs = Theme.of(context).colorScheme;
     final nameController = TextEditingController();
 
     await showDialog(
       context: context,
-      builder: (context) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 200),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 16), // espacio superior agregado
-                const Text(
-                  'Agregar contacto',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.all(16),
+      builder: (dialogContext) {
+        final dialogCs = Theme.of(dialogContext).colorScheme;
+        return Dialog(
+          backgroundColor: dialogCs.surface,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 200),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  Text(
+                    'Agregar contacto',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: dialogCs.onSurface,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancelar'),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: cs.primary,
-                        foregroundColor: cs.onPrimary,
+                  const SizedBox(height: 24),
+                  TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      labelText: 'Nombre',
+                      labelStyle: TextStyle(color: dialogCs.onSurfaceVariant),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: dialogCs.outline),
                       ),
-                      onPressed: () async {
-                        final name = nameController.text.trim();
-                        if (name.isNotEmpty) {
-                          await FirebaseFirestore.instance
-                              .collection('vecinos')
-                              .add({
-                                'name': name,
-                                'timestamp': FieldValue.serverTimestamp(),
-                              });
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Guardar'),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: dialogCs.outline),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: dialogCs.primary, width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.all(16),
                     ),
-                  ],
-                ),
-              ],
+                    style: TextStyle(color: dialogCs.onSurface),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text(
+                          'Cancelar',
+                          style: TextStyle(color: dialogCs.onSurfaceVariant),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: dialogCs.primary,
+                          foregroundColor: dialogCs.onPrimary,
+                        ),
+                        onPressed: () async {
+                          final name = nameController.text.trim();
+                          if (name.isNotEmpty) {
+                            await FirebaseFirestore.instance
+                                .collection('vecinos')
+                                .add({
+                                  'name': name,
+                                  'timestamp': FieldValue.serverTimestamp(),
+                                });
+                          }
+                          Navigator.pop(dialogContext);
+                        },
+                        child: const Text('Guardar'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
+  }
+
+  void _editContact(BuildContext context, String contactId, String currentName) async {
+    final cs = Theme.of(context).colorScheme;
+    final nameController = TextEditingController(text: currentName);
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        final dialogCs = Theme.of(dialogContext).colorScheme;
+        return Dialog(
+          backgroundColor: dialogCs.surface,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 200),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  Text(
+                    'Editar contacto',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: dialogCs.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      labelText: 'Nombre',
+                      labelStyle: TextStyle(color: dialogCs.onSurfaceVariant),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: dialogCs.outline),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: dialogCs.outline),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: dialogCs.primary, width: 2),
+                      ),
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                    style: TextStyle(color: dialogCs.onSurface),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text(
+                          'Cancelar',
+                          style: TextStyle(color: dialogCs.onSurfaceVariant),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: dialogCs.primary,
+                          foregroundColor: dialogCs.onPrimary,
+                        ),
+                        onPressed: () async {
+                          final name = nameController.text.trim();
+                          if (name.isNotEmpty && name != currentName) {
+                            await FirebaseFirestore.instance
+                                .collection('vecinos')
+                                .doc(contactId)
+                                .update({
+                                  'name': name,
+                                  'timestamp': FieldValue.serverTimestamp(),
+                                });
+                          }
+                          Navigator.pop(dialogContext);
+                        },
+                        child: const Text('Guardar'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _deleteContact(BuildContext context, String contactId, String contactName) async {
+    final cs = Theme.of(context).colorScheme;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        final dialogCs = Theme.of(context).colorScheme;
+        return AlertDialog(
+          title: Text(
+            'Eliminar contacto',
+            style: TextStyle(color: dialogCs.onSurface),
+          ),
+          content: Text(
+            '¿Estás seguro de que deseas eliminar a $contactName?',
+            style: TextStyle(color: dialogCs.onSurfaceVariant),
+          ),
+          backgroundColor: dialogCs.surface,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: dialogCs.onSurfaceVariant),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Eliminar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await FirebaseFirestore.instance
+          .collection('vecinos')
+          .doc(contactId)
+          .delete();
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$contactName eliminado'),
+            backgroundColor: cs.secondary,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
 
@@ -548,14 +716,55 @@ class _ConversacionesVecinosScreenState
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                        if (horaTexto.isNotEmpty)
-                                          Text(
-                                            horaTexto,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[600],
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            if (horaTexto.isNotEmpty)
+                                              Text(
+                                                horaTexto,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                            PopupMenuButton<String>(
+                                              icon: Icon(
+                                                Icons.more_vert,
+                                                color: Colors.grey[600],
+                                                size: 20,
+                                              ),
+                                              onSelected: (value) {
+                                                if (value == 'edit') {
+                                                  _editContact(context, doc.id, name);
+                                                } else if (value == 'delete') {
+                                                  _deleteContact(context, doc.id, name);
+                                                }
+                                              },
+                                              itemBuilder: (context) => [
+                                                PopupMenuItem(
+                                                  value: 'edit',
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(Icons.edit, size: 20, color: cs.secondary),
+                                                      const SizedBox(width: 8),
+                                                      const Text('Editar'),
+                                                    ],
+                                                  ),
+                                                ),
+                                                PopupMenuItem(
+                                                  value: 'delete',
+                                                  child: Row(
+                                                    children: [
+                                                      const Icon(Icons.delete, size: 20, color: Colors.red),
+                                                      const SizedBox(width: 8),
+                                                      const Text('Eliminar'),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 4),
