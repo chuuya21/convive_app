@@ -1,23 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter_application_1/screens/home.dart';
-// import 'package:flutter_application_1/screens/products.dart';
-
-// import 'package:convive_app/screens/splashscreen.dart'; // comentado: no usado aquí
-// import 'package:convive_app/screens/ofrecer.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/perfil.dart';
 import 'package:convive_app/screens/enviar_solicitud.dart';
-// import 'package:convive_app/screens/enviar_solicitud.dart';
-// import 'package:convive_app/screens/products.dart';
-// import 'package:convive_app/screens/login.dart';
-// import 'package:convive_app/theme/theme.dart'; // comentado: no usado aquí
+
 
 class ConversacionesVecinosScreen extends StatefulWidget {
   const ConversacionesVecinosScreen({super.key});
-
-  
 
   @override
   State<ConversacionesVecinosScreen> createState() =>
@@ -28,7 +18,6 @@ class _ConversacionesVecinosScreenState
     extends State<ConversacionesVecinosScreen> {
 
   void _addContact(BuildContext context) async {
-    final cs = Theme.of(context).colorScheme;
     final nameController = TextEditingController();
 
     await showDialog(
@@ -117,7 +106,6 @@ class _ConversacionesVecinosScreenState
   }
 
   void _editContact(BuildContext context, String contactId, String currentName) async {
-    final cs = Theme.of(context).colorScheme;
     final nameController = TextEditingController(text: currentName);
 
     await showDialog(

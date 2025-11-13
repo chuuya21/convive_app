@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:convive_app/screens/home.dart';     // HomeScreen
-import 'package:convive_app/screens/login.dart'; // LoginScreen
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Future.delayed(const Duration(milliseconds: 500), () {
         final user = FirebaseAuth.instance.currentUser;
 
-        if (!mounted) return; // proteger uso de `context` después de await/delay
+        if (!mounted) return;
 
         if (user != null) {
           // Usuario autenticado → a Home
@@ -47,11 +46,11 @@ class _SplashScreenState extends State<SplashScreen> {
   final cs = Theme.of(context).colorScheme;
 
   return Scaffold(
-    backgroundColor: cs.primary, // solid background color (theme primary)
+    backgroundColor: cs.primary, // Color fondo
     body: Center(
       child: Image.asset(
-        'assets/img/splash_logo.png', // your logo file
-        width: 100, // adjust as needed
+        'assets/img/splash_logo.png', // Imagen
+        width: 110, // tamaño
         fit: BoxFit.contain,
       ),
     ),

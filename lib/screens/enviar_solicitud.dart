@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:convive_app/screens/login.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
-// import 'package:convive_app/screens/products.dart';
 import 'package:convive_app/screens/perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -77,17 +75,6 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const PerfilScreen()),
-      );
-    }
-  }
-
-  void _signOut() async {
-    await FirebaseAuth.instance.signOut();
-    if (mounted) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-        (route) => false,
       );
     }
   }

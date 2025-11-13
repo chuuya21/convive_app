@@ -1,12 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
-
 import 'package:convive_app/screens/splashscreen.dart';
-// import 'package:convive_app/screens/home.dart';
-// import 'package:convive_app/screens/login.dart';
 import 'package:convive_app/theme/theme.dart';
 
 Future<void> main() async {
@@ -41,7 +36,7 @@ class MainApp extends StatelessWidget {
   theme: AppTheme.lightTheme,
   darkTheme: AppTheme.darkTheme,
   themeMode: ThemeMode.system,
-  home: const SplashScreen(), // <— use this just to test
+  home: const SplashScreen(),
 );
 
   }

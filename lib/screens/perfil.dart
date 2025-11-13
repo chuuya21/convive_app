@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:convive_app/screens/enviar_solicitud.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
-// import 'package:convive_app/screens/login.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
+
 
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
@@ -15,8 +13,7 @@ class PerfilScreen extends StatefulWidget {
 
 class _PerfilScreenState extends State<PerfilScreen>
     with SingleTickerProviderStateMixin {
-  final int _currentBottomNavIndex = 3; // Mi Perfil está activo
-  // int _selectedTab = 0; // 0: Información, 1: Comunidad, 2: Actividad
+  final int _currentBottomNavIndex = 3; 
   late TabController _tabController;
 
   @override
@@ -61,17 +58,6 @@ class _PerfilScreenState extends State<PerfilScreen>
     }
   }
 
-  // void _signOut() async {
-  //   await FirebaseAuth.instance.signOut();
-  //   if (mounted) {
-  //     Navigator.pushAndRemoveUntil(
-  //       context,
-  //       MaterialPageRoute(builder: (_) => const LoginScreen()),
-  //       (route) => false,
-  //     );
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -99,10 +85,6 @@ class _PerfilScreenState extends State<PerfilScreen>
             },
           ),
         ],
-        // systemOverlayStyle: SystemUiOverlayStyle(
-        //   statusBarColor: colorScheme.surface,
-        //   statusBarIconBrightness: Brightness.dark,
-        // ),
       ),
       body: SingleChildScrollView(
         child: Column(
