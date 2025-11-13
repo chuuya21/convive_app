@@ -15,12 +15,7 @@ Future<void> main() async {
   try {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        apiKey: "AIzaSyAUl-jBGmBBxf_UPjKnEOCV4SSMTfYqs1c",
-        authDomain: "convive-app-3ec38.firebaseapp.com",
-        projectId: "convive-app-3ec38",
-        storageBucket: "convive-app-3ec38.firebasestorage.app",
-        messagingSenderId: "812873041446",
-        appId: "1:812873041446:web:f4520f2f3f2d47084b88e7",
+        
       ),
     );
   } on FirebaseException catch (e) {
