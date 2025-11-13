@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // import 'package:convive_app/screens/splashscreen.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
 import 'package:convive_app/screens/login.dart';
 // import 'package:convive_app/theme/theme.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,6 +44,30 @@ class _HomeScreenState extends State<HomeScreen> {
       'icon': Icons.more_horiz,
       'label': 'Otros...',
       'value': 'otros',
+    },
+  ];
+  // Selección de duración/tiempo (segunda sección que antes reutilizaba _tiposAyuda)
+  String? _duracionSeleccionada;
+  final List<Map<String, dynamic>> _tiposDuracion = [
+    {
+      'icon': Icons.timer,
+      'label': 'Tiempo completo',
+      'value': 'fulltime',
+    },
+    {
+      'icon': Icons.schedule,
+      'label': 'Medio tiempo',
+      'value': 'parttime',
+    },
+    {
+      'icon': Icons.hourglass_bottom,
+      'label': 'Fines de semana',
+      'value': 'finde',
+    },
+    {
+      'icon': Icons.sync,
+      'label': 'Por horas',
+      'value': 'horas',
     },
   ];
   
@@ -87,40 +112,107 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _publicarSolicitud() {
+  void _publicarSolicitud() async {
+    // Validaciones
     if (_tipoAyudaSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor selecciona un tipo de ayuda'),
-        ),
+        const SnackBar(content: Text('Por favor selecciona un tipo de ayuda')),
+      );
+      return;
+    }
+
+    if (_duracionSeleccionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor selecciona una disponibilidad')),
       );
       return;
     }
 
     if (_tituloController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor ingresa un título'),
-        ),
+        const SnackBar(content: Text('Por favor ingresa un título')),
       );
       return;
     }
 
     if (_detallesController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor ingresa los detalles'),
-        ),
+        const SnackBar(content: Text('Por favor ingresa los detalles')),
       );
       return;
     }
 
-    // Aquí puedes agregar la lógica para publicar la solicitud en Firestore
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Solicitud publicada exitosamente'),
-      ),
-    );
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Debes iniciar sesión primero')),
+        );
+        return;
+      }
+
+      // Crear documento en Firestore
+      final data = {
+        'usuarioId': user.uid,
+        'email': user.email,
+        'tipo': _tipoAyudaSeleccionado,
+        'duracion': _duracionSeleccionada,
+        'titulo': _tituloController.text.trim(),
+        'detalles': _detallesController.text.trim(),
+        'fechaCreacion': FieldValue.serverTimestamp(),
+      };
+
+      // Debug info: print payload and target project
+      // ignore: avoid_print
+      print('Firestore: intentando agregar documento a servicios_ofrecidos: $data');
+
+      final docRef = await FirebaseFirestore.instance.collection('servicios_ofrecidos').add(data);
+
+      // Debug info: document id
+      // ignore: avoid_print
+      print('Firestore: documento agregado con id: ${docRef.id}');
+
+      // Limpiar formulario
+      if (mounted) {
+        _tituloController.clear();
+        _detallesController.clear();
+        setState(() {
+          _tipoAyudaSeleccionado = null;
+          _duracionSeleccionada = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('¡Servicio publicado exitosamente!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } on FirebaseException catch (e) {
+      // Firebase-specific errors (permission-denied, unavailable, etc.)
+      // ignore: avoid_print
+      print('FirebaseException al publicar: code=${e.code} message=${e.message}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al publicar (Firebase): ${e.code}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      // Other errors
+      // ignore: avoid_print
+      print('Error inesperado al publicar: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al publicar: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -408,7 +500,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Sección: Tipo de ayuda
+          // Sección: Tipo de servicio (duración/tiempo)
           const Text(
             '¿Qué tipo de servicio ofreces? *',
             style: TextStyle(
@@ -427,15 +519,15 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 12,
               childAspectRatio: 1.2,
             ),
-            itemCount: _tiposAyuda.length,
+            itemCount: _tiposDuracion.length,
             itemBuilder: (context, index) {
-              final tipo = _tiposAyuda[index];
-              final isSelected = _tipoAyudaSeleccionado == tipo['value'];
+              final tipo = _tiposDuracion[index];
+              final isSelected = _duracionSeleccionada == tipo['value'];
 
               return InkWell(
                 onTap: () {
                   setState(() {
-                    _tipoAyudaSeleccionado = tipo['value'];
+                    _duracionSeleccionada = tipo['value'];
                   });
                 },
                 child: Container(
@@ -444,8 +536,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFFFF9800) // Naranja cuando está seleccionado
-                          : const Color(0xFFFFB74D), // Naranja claro
+                          ? const Color(0xFF4CAF50) // Verde cuando está seleccionado
+                          : Colors.grey.shade300,
                       width: 2,
                     ),
                   ),
@@ -454,10 +546,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Icon(
                         tipo['icon'] as IconData,
-                        size: 40,
-                        color: isSelected
-                            ? const Color(0xFFFF9800)
-                            : const Color(0xFFFFB74D),
+                        size: 36,
+                        color: isSelected ? const Color(0xFF4CAF50) : Colors.grey[700],
                       ),
                       const SizedBox(height: 8),
                       Text(

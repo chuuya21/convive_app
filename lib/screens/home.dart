@@ -406,6 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          /* Contador de caracteres (comentado — duplicado en ofrecer.dart)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -425,6 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+          */
           const SizedBox(height: 24),
 
           // Sección: Tipo de ayuda
