@@ -1,11 +1,12 @@
+import 'package:convive_app/screens/conversaciones_vecinos.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:convive_app/screens/splashscreen.dart';
-import 'package:convive_app/screens/chats.dart';
-import 'package:convive_app/screens/login.dart';
+// import 'package:convive_app/screens/home.dart';
+// import 'package:convive_app/screens/login.dart';
 import 'package:convive_app/theme/theme.dart';
 
 Future<void> main() async {
@@ -49,29 +50,16 @@ class MainApp extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  void _signOut(BuildContext context) async {
-    await GoogleSignIn.instance.signOut();
-    await FirebaseAuth.instance.signOut();
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inicio'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => _signOut(context),
-          ),
-        ],
+        backgroundColor: cs.secondary,
       ),
-      body: const ChatsScreen(),
+      body: const ConversacionesVecinosScreen(),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart'; // comentado: no usado actualmente
 
 
 /// The [AppTheme] defines light and dark themes for the app.
@@ -25,7 +25,7 @@ abstract final class AppTheme {
     colors: const FlexSchemeColor(
       primary: Color(0xFFFF7B4A),
       primaryContainer: Color(0xFFFFE2D2),
-      secondary: Color(0xFF0060BC),
+      secondary: Color(0xFF1ABEFF),
       secondaryContainer: Color(0xFF81CFFF),
       tertiary: Color(0xFF6B3DF0),
       tertiaryContainer: Color(0xFFD1C4FF),

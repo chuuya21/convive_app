@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:convive_app/main.dart';     // HomScreen
+import 'package:convive_app/main.dart';     // HomeScreen
 import 'package:convive_app/screens/login.dart'; // LoginScreen
 
 class SplashScreen extends StatefulWidget {
@@ -22,6 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
       Future.delayed(const Duration(milliseconds: 500), () {
         final user = FirebaseAuth.instance.currentUser;
+
+        if (!mounted) return; // proteger uso de `context` después de await/delay
 
         if (user != null) {
           // Usuario autenticado → a Home
