@@ -7,7 +7,7 @@ import 'package:convive_app/screens/conversaciones_vecinos.dart';
 import 'package:convive_app/screens/perfil.dart';
 import 'package:convive_app/screens/confirmacion_ofrecer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+//oficial hola
 class OfrecerScreen extends StatefulWidget {
   const OfrecerScreen({super.key});
 
