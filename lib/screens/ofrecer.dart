@@ -147,12 +147,6 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
       appBar: AppBar(
         backgroundColor: cs.primary,
         title: const Text('Ofrecer Servicio', style: TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: _signOut,
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
@@ -505,17 +499,6 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
           const SizedBox(height: 16),
         ],
       ),
-    );
-  }
-}
-
-class PlaceholderScreen extends StatelessWidget {
-  const PlaceholderScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Pantalla "Otros" aún no implementada')),
     );
   }
 }

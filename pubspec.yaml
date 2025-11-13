@@ -49,6 +49,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -63,6 +64,7 @@ flutter:
   assets:
     - assets/img/splash_bg.png
     - assets/img/splash_logo.png
+    - assets/img/launcher_logo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -94,3 +96,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Configuración para generar iconos del launcher
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/img/launcher_logo.png"
+  # Configuración para adaptive icon de Android (API 26+)
+  # Si tu logo tiene fondo, puedes usar solo image_path
+  # Si tu logo es transparente, descomenta las líneas siguientes:
+  # adaptive_icon_background: "#FFFFFF"
+  # adaptive_icon_foreground: "assets/img/launcher_logo.png"
