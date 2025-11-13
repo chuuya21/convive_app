@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// import 'package:convive_app/screens/splashscreen.dart';
+import 'package:convive_app/screens/enviar_solicitud.dart';
+// import 'package:convive_app/screens/products.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
+// import 'package:convive_app/screens/detalle_solicitud.dart';
+import 'package:convive_app/screens/perfil.dart';
+// import 'package:convive_app/screens/ofrecer.dart';
 import 'package:convive_app/screens/login.dart';
-// import 'package:convive_app/theme/theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,14 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onTabTapped(int index) {
     if (index == 0) {
-      // Inicio → se queda en HomeScreen
-      setState(() => _currentIndex = index);
-    } else if (index == 1) {
-      // Explorar → ProductsScreen
+      // Inicio → EnviarSolicitudScreen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()),
+        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
       );
+    } else if (index == 1) {
+      // Explorar → se queda en HomeScreen
+      setState(() => _currentIndex = index);
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
       Navigator.pushReplacement(
@@ -72,8 +75,11 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()),
       );
     } else if (index == 3) {
-      // Mi Perfil → por ahora se queda
-      setState(() => _currentIndex = index);
+      // Mi Perfil → PerfilScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const PerfilScreen()),
+      );
     }
   }
 

@@ -4,7 +4,10 @@ import 'package:flutter/services.dart';
 // import 'package:flutter_application_1/screens/products.dart';
 
 // import 'package:convive_app/screens/splashscreen.dart'; // comentado: no usado aquí
-import 'package:convive_app/screens/ofrecer.dart';
+// import 'package:convive_app/screens/ofrecer.dart';
+import 'package:convive_app/screens/home.dart';
+// import 'package:convive_app/screens/enviar_solicitud.dart';
+// import 'package:convive_app/screens/products.dart';
 // import 'package:convive_app/screens/login.dart';
 // import 'package:convive_app/theme/theme.dart'; // comentado: no usado aquí
 

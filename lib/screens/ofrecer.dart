@@ -8,14 +8,14 @@ import 'package:convive_app/screens/login.dart';
 // import 'package:convive_app/theme/theme.dart';
 
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class OfrecerScreen extends StatefulWidget {
+  const OfrecerScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<OfrecerScreen> createState() => _OfrecerScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _OfrecerScreenState extends State<OfrecerScreen> {
   final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 0; // Home (HomeScreen)
   
@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Explorar → ProductsScreen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()),
+        MaterialPageRoute(builder: (_) => const OfrecerScreen()),
       );
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen

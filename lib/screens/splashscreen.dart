@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:convive_app/main.dart';     // HomeScreen
+import 'package:convive_app/screens/home.dart';     // HomeScreen
 import 'package:convive_app/screens/login.dart'; // LoginScreen
 
 class SplashScreen extends StatefulWidget {
