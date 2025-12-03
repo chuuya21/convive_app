@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:convive_app/screens/enviar_solicitud.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
 

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:convive_app/screens/home.dart';
-import 'package:convive_app/screens/conversaciones_vecinos.dart';
-import 'package:convive_app/screens/perfil.dart';
 import 'package:convive_app/screens/confirmacion_ofrecer.dart';
 
 

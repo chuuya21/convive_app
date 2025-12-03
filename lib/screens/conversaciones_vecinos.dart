@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/perfil.dart';
-import 'package:convive_app/screens/enviar_solicitud.dart';
 
 
 class ConversacionesVecinosScreen extends StatefulWidget {

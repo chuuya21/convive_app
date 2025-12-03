@@ -119,7 +119,7 @@ setState(() {});
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black87),
+            icon: const Icon(Icons.more_vert, color: Colors.white),
             onPressed: () {
               // Acción para menú de opciones
             },

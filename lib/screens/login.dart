@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:convive_app/screens/home.dart';
 
-import 'package:convive_app/screens/enviar_solicitud.dart'; // Para EnviarSolicitudScreen (Inicio)
+import 'package:convive_app/main.dart'; // Para HomeScreen
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final googleUser = await GoogleSignIn.instance.authenticate();
 
-      final googleAuth = googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
@@ -48,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null && mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     }
   }
@@ -59,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -84,11 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         textStyle: const TextStyle(fontSize: 16),
                       ),
-                        icon: Image.asset(
-                        'assets/google.png',
-                        height: 24,
-                        width: 24,
-                      ),  
+                      icon: const Icon(Icons.login),
                       label: const Text("Iniciar con Google"),
                       onPressed: _login,
                     ),

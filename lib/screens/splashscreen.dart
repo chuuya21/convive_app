@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:convive_app/screens/home.dart';     // HomeScreen
+import 'package:convive_app/screens/home.dart';   
+import 'package:convive_app/screens/login.dart'; 
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,16 +26,16 @@ class _SplashScreenState extends State<SplashScreen> {
         if (!mounted) return;
 
         if (user != null) {
-          // Usuario no autenticado → a Home
+          // Usuario autenticado → a Home
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const HomeScreen()),
           );
         } else {
-          // Usuario autenticado → a Home
+          // Usuario no autenticado → a Login
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
           );
         }
       });
