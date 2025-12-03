@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:convive_app/screens/home.dart';
 
 class EnviarSolicitudScreen extends StatefulWidget {
   const EnviarSolicitudScreen({super.key});
@@ -42,11 +43,31 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
   ];
   
   @override
+  void initState() {
+    super.initState();
+    // Agregar listeners para actualizar el estado cuando cambien los campos
+    _tituloController.addListener(_updateFormState);
+    _detallesController.addListener(_updateFormState);
+  }
+
+  @override
   void dispose() {
+    _tituloController.removeListener(_updateFormState);
+    _detallesController.removeListener(_updateFormState);
     _tituloController.dispose();
     _detallesController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _updateFormState() {
+    setState(() {});
+  }
+
+  bool _isFormValid() {
+    return _tipoAyudaSeleccionado != null &&
+        _tituloController.text.trim().isNotEmpty &&
+        _detallesController.text.trim().isNotEmpty;
   }
 
   
@@ -110,6 +131,16 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
             backgroundColor: Colors.green,
           ),
         );
+        
+        
+        
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
+            );
+          }
+        
       }
     } catch (e) {
       if (mounted) {
@@ -257,6 +288,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
                   setState(() {
                     _tipoAyudaSeleccionado = tipo['value'];
                   });
+                  _updateFormState();
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -418,14 +450,16 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: _publicarSolicitud,
+              onPressed: _isFormValid() ? _publicarSolicitud : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary, // Naranja
+                backgroundColor: _isFormValid() ? cs.primary : Colors.grey[400],
                 foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey[300],
+                disabledForegroundColor: Colors.grey[600],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                elevation: 2,
+                elevation: _isFormValid() ? 2 : 0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

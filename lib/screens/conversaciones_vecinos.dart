@@ -292,6 +292,7 @@ class _ConversacionesVecinosScreenState
       appBar: AppBar(
         backgroundColor: cs.secondary, // Azul del header
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

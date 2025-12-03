@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:convive_app/screens/enviar_solicitud.dart';
 // import 'package:convive_app/screens/products.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
 import 'package:convive_app/screens/detalle_solicitud.dart';
 import 'package:convive_app/screens/perfil.dart';
 import 'package:convive_app/screens/ofrecer.dart';
+import 'package:convive_app/screens/login.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -73,6 +76,31 @@ setState(() {});
     }
   }
 
+  Future<void> _cerrarSesion() async {
+    try {
+      // Cerrar sesión de Google Sign In
+      await GoogleSignIn.instance.signOut();
+      
+      // Cerrar sesión de Firebase Auth
+      await FirebaseAuth.instance.signOut();
+      
+      // Navegar a la pantalla de login
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false, // Elimina todas las rutas anteriores
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cerrar sesión: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -82,6 +110,7 @@ setState(() {});
       appBar: AppBar(
         backgroundColor: cs.secondary, // Azul claro del header
         elevation: 0,
+        automaticallyImplyLeading: false,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: cs.secondaryContainer,
           statusBarIconBrightness: Brightness.dark,
@@ -118,11 +147,25 @@ setState(() {});
           ],
         ),
         actions: [
-          IconButton(
+          PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () {
-              // Acción para menú de opciones
+            onSelected: (value) {
+              if (value == 'cerrar_sesion') {
+                _cerrarSesion();
+              }
             },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'cerrar_sesion',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Cerrar sesión'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

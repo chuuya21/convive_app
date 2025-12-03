@@ -65,6 +65,8 @@ flutter:
     - assets/img/splash_bg.png
     - assets/img/splash_logo.png
     - assets/img/launcher_logo.png
+    - assets/img/login.jpg
+    - assets/img/google_logo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

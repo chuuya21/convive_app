@@ -61,7 +61,7 @@ class _PerfilScreenState extends State<PerfilScreen>
       appBar: AppBar(
         backgroundColor: cs.surface,
         elevation: 0,
-
+        automaticallyImplyLeading: false,
         title: Text(
           'Mi perfil',
           style: TextStyle(

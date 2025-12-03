@@ -17,10 +17,10 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
     final cs = Theme.of(context).colorScheme;
     
     return Scaffold(
-      backgroundColor: cs.secondaryContainer, // Azul claro del header
+      backgroundColor: cs.secondary, // Azul claro del header
       appBar: AppBar(
-        backgroundColor: cs.secondaryContainer,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        backgroundColor: cs.secondary,
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: cs.secondaryContainer,
@@ -32,7 +32,7 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
             const Text(
               'Detalles de la Solicitud',
               style: TextStyle(
-                color: Colors.black87,
+                color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -42,7 +42,7 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black87),
+            icon: const Icon(Icons.more_vert, color: Colors.white),
             onPressed: () {
               // Acción para menú de opciones
             },
