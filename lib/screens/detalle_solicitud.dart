@@ -14,13 +14,16 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF81CFFF), // Azul claro del header
+      backgroundColor: cs.secondaryContainer, // Azul claro del header
       appBar: AppBar(
-        backgroundColor: const Color(0xFF81CFFF),
+        backgroundColor: cs.secondaryContainer,
+        iconTheme: const IconThemeData(color: Colors.black87),
         elevation: 0,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Color(0xFF81CFFF),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: cs.secondaryContainer,
           statusBarIconBrightness: Brightness.dark,
         ),
         title: Column(
@@ -70,7 +73,7 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundColor: Colors.purple[300],
+                          backgroundColor: cs.primary,
                           child: const Icon(
                             Icons.person,
                             color: Colors.white,
@@ -143,18 +146,18 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2196F3).withAlpha((0.1 * 255).round()),
+                            color: cs.secondary.withAlpha((0.1 * 255).round()),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: const Color(0xFF2196F3).withAlpha((0.3 * 255).round()),
+                              color: cs.secondary.withAlpha((0.3 * 255).round()),
                               width: 1,
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Arte & Crochet',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF2196F3),
+                              color: cs.secondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -165,18 +168,18 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2196F3).withAlpha((0.1 * 255).round()),
+                            color: cs.secondary.withAlpha((0.1 * 255).round()),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: const Color(0xFF2196F3).withAlpha((0.3 * 255).round()),
+                              color: cs.secondary.withAlpha((0.3 * 255).round()),
                               width: 1,
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Mascotas',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF2196F3),
+                              color: cs.secondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -201,7 +204,7 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: cs.primary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
@@ -227,18 +230,18 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
                             ),
                           );
                         },
-                        icon: const Icon(Icons.chat_bubble_outline, color: Colors.orange),
-                        label: const Text(
+                        icon: Icon(Icons.chat_bubble_outline, color: cs.primary),
+                        label: Text(
                           'Dejar un mensaje',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.orange,
+                            color: cs.primary,
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.orange,
-                          side: const BorderSide(color: Colors.orange, width: 2),
+                          foregroundColor: cs.primary,
+                          side: BorderSide(color: cs.primary, width: 2),
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),

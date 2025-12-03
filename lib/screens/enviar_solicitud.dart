@@ -130,6 +130,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: cs.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text('Solicitar Servicio', style: TextStyle(color: Colors.white)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),

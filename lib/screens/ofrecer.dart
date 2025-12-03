@@ -14,7 +14,6 @@ class OfrecerScreen extends StatefulWidget {
 
 class _OfrecerScreenState extends State<OfrecerScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _currentIndex = 0; 
   
   
   String? _tipoAyudaSeleccionado;
@@ -51,31 +50,6 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
     _detallesController.dispose();
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _onTabTapped(int index) {
-    if (index == 0) {
-      // Inicio → se queda en OfrecerScreen
-      setState(() => _currentIndex = index);
-    } else if (index == 1) {
-      // Explorar → HomeScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    } else if (index == 2) {
-      // Chats → ConversacionesVecinosScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()),
-      );
-    } else if (index == 3) {
-      // Mi Perfil → PerfilScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const PerfilScreen()),
-      );
-    }
   }
 
   void _publicarSolicitud() {
@@ -132,6 +106,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: cs.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text('Ofrecer Servicio', style: TextStyle(color: Colors.white)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
@@ -162,44 +137,6 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
       ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
-
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withAlpha((0.3 * 255).round()),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onTabTapped,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: cs.secondary,
-          unselectedItemColor: Colors.grey,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Inicio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.explore),
-              label: 'Explorar',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              label: 'Chats',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Mi Perfil',
-            ),
-          ],
-        ),
-      ),
 
     );
   }
