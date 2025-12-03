@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:convive_app/screens/home.dart';
-import 'package:convive_app/screens/conversaciones_vecinos.dart';
-import 'package:convive_app/screens/perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class EnviarSolicitudScreen extends StatefulWidget {
@@ -14,7 +11,6 @@ class EnviarSolicitudScreen extends StatefulWidget {
 
 class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _currentIndex = 1; // Inicio (EnviarSolicitudScreen)
   
   // Variables para el formulario de Pedir Servicio
   String? _tipoAyudaSeleccionado;
@@ -53,31 +49,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     super.dispose();
   }
 
-  void _onTabTapped(int index) {
-    if (index == 0) {
-      // Explorar → HomeScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-      
-    } else if (index == 1) {
-      // Inicio → se queda en EnviarSolicitudScreen
-      setState(() => _currentIndex = index);
-    } else if (index == 2) {
-      // Chats → ConversacionesVecinosScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()),
-      );
-    } else if (index == 3) {
-      // Mi Perfil → PerfilScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const PerfilScreen()),
-      );
-    }
-  }
+  
 
   void _publicarSolicitud() async {
     if (_tipoAyudaSeleccionado == null) {
@@ -158,7 +130,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: cs.primary,
-        title: const Text('Pedir Servicio', style: TextStyle(color: Colors.white)),
+        title: const Text('Solicitar Servicio', style: TextStyle(color: Colors.white)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
@@ -188,48 +160,8 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
       ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _publicarSolicitud,
-        backgroundColor: cs.secondary,
-        child: const Icon(Icons.check, color: Colors.white),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withAlpha((0.3 * 255).round()),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onTabTapped,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: cs.secondary,
-          unselectedItemColor: Colors.grey,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Inicio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.explore),
-              label: 'Explorar',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              label: 'Chats',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Mi Perfil',
-            ),
-          ],
-        ),
-      ),
+      
+      
 
     );
   }

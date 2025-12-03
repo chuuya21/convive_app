@@ -162,11 +162,7 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
       ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _publicarSolicitud,
-        backgroundColor: cs.secondary,
-        child: const Icon(Icons.check, color: Colors.white),
-      ),
+
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [

@@ -270,11 +270,7 @@ class _ConversacionesVecinosScreenState
       );
       
     } else if (index == 1) {
-      // Inicio → EnviarSolicitudScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
-      );
+      setState(() {});
     } else if (index == 2) {
       // Chats → se queda en ConversacionesVecinosScreen
       setState(() => _currentBottomNavIndex = index);

@@ -3,7 +3,6 @@ import 'package:convive_app/screens/enviar_solicitud.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
 
-
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
 
@@ -13,7 +12,7 @@ class PerfilScreen extends StatefulWidget {
 
 class _PerfilScreenState extends State<PerfilScreen>
     with SingleTickerProviderStateMixin {
-  final int _currentBottomNavIndex = 3; 
+  final int _currentBottomNavIndex = 3;
   late TabController _tabController;
 
   @override
@@ -41,11 +40,7 @@ class _PerfilScreenState extends State<PerfilScreen>
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else if (index == 1) {
-      // Inicio → EnviarSolicitudScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
-      );
+      setState(() {});
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
       Navigator.pushReplacement(
@@ -61,13 +56,13 @@ class _PerfilScreenState extends State<PerfilScreen>
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    
+
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: AppBar(
         backgroundColor: cs.surface,
         elevation: 0,
-        
+
         title: Text(
           'Mi perfil',
           style: TextStyle(
@@ -114,7 +109,9 @@ class _PerfilScreenState extends State<PerfilScreen>
                           width: 150,
                           height: 150,
                           decoration: BoxDecoration(
-                            color: cs.secondaryContainer.withAlpha((0.2 * 255).round()),
+                            color: cs.secondaryContainer.withAlpha(
+                              (0.2 * 255).round(),
+                            ),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -158,10 +155,7 @@ class _PerfilScreenState extends State<PerfilScreen>
             const SizedBox(height: 8),
             Text(
               'Miembro desde junio 2025',
-              style: TextStyle(
-                fontSize: 14,
-                color: cs.onSurfaceVariant,
-              ),
+              style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 24),
             // Botones Editar perfil y Compartir
@@ -198,7 +192,11 @@ class _PerfilScreenState extends State<PerfilScreen>
                       onPressed: () {
                         // Acción para compartir
                       },
-                      icon: Icon(Icons.share, color: cs.onSurfaceVariant, size: 18),
+                      icon: Icon(
+                        Icons.share,
+                        color: cs.onSurfaceVariant,
+                        size: 18,
+                      ),
                       label: Text(
                         'Compartir',
                         style: TextStyle(
@@ -355,10 +353,7 @@ class _PerfilScreenState extends State<PerfilScreen>
           selectedItemColor: cs.secondaryContainer,
           unselectedItemColor: cs.onSurfaceVariant,
           items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Inicio',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
             BottomNavigationBarItem(
               icon: Icon(Icons.explore),
               label: 'Explorar',
@@ -426,9 +421,19 @@ class _PerfilScreenState extends State<PerfilScreen>
             ),
           ),
           const SizedBox(height: 16),
-          _buildInfoItem(context, Icons.location_on, 'Dirección', 'Av. Fernando Castillo Velasco'),
+          _buildInfoItem(
+            context,
+            Icons.location_on,
+            'Dirección',
+            'Av. Fernando Castillo Velasco',
+          ),
           const SizedBox(height: 16),
-          _buildInfoItem(context, Icons.email, 'Email', 'Julian.gomezzz@gmail.com'),
+          _buildInfoItem(
+            context,
+            Icons.email,
+            'Email',
+            'Julian.gomezzz@gmail.com',
+          ),
           const SizedBox(height: 16),
           _buildInfoItem(context, Icons.phone, 'Teléfono', '+569 6123 6795'),
           const SizedBox(height: 32),
@@ -537,7 +542,12 @@ class _PerfilScreenState extends State<PerfilScreen>
     );
   }
 
-  Widget _buildInfoItem(BuildContext context, IconData icon, String label, String value) {
+  Widget _buildInfoItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
@@ -553,10 +563,7 @@ class _PerfilScreenState extends State<PerfilScreen>
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: cs.onSurfaceVariant,
-                ),
+                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
               ),
               const SizedBox(height: 4),
               Text(

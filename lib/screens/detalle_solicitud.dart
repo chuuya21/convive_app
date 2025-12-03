@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:convive_app/screens/enviar_solicitud.dart';
-import 'package:convive_app/screens/home.dart';
-import 'package:convive_app/screens/conversaciones_vecinos.dart';
-import 'package:convive_app/screens/perfil.dart';
 import 'package:convive_app/screens/enviar_mensaje.dart';
 
 class DetalleSolicitudScreen extends StatefulWidget {
@@ -14,35 +10,7 @@ class DetalleSolicitudScreen extends StatefulWidget {
 }
 
 class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
-  final int _currentBottomNavIndex = 0; // Inicio está activo
 
-  void _onBottomNavTapped(int index) {
-    if (index == 0) {
-      // Inicio → EnviarSolicitudScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
-      );
-    } else if (index == 1) {
-      // Explorar → HomeScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    } else if (index == 2) {
-      // Chats → ConversacionesVecinosScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const ConversacionesVecinosScreen()),
-      );
-    } else if (index == 3) {
-      // Mi Perfil → PerfilScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const PerfilScreen()),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +27,7 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Hola, Usuario',
+              'Detalles de la Solicitud',
               style: TextStyle(
                 color: Colors.black87,
                 fontSize: 18,
@@ -67,23 +35,6 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
               ),
             ),
             const SizedBox(height: 2),
-            Row(
-              children: [
-                const Icon(
-                  Icons.location_on,
-                  size: 16,
-                  color: Colors.black87,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Dirección Ejemplo 123',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
         actions: [
@@ -114,28 +65,6 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Botón cerrar y título
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.black87),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Detalles de la solicitud',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-
                     // Perfil del usuario
                     Row(
                       children: [
@@ -154,7 +83,7 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Usuario Ejemplo',
+                                'Usuario1',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
@@ -178,7 +107,7 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
 
                     // Descripción
                     const Text(
-                      'Enseño crochet para que tu gatito nunca tenga sus patitas frías. Aprender a tejer ropa abrigada para este invierno, enseñar los fines de semana 🐱🧶',
+                      'Enseño crochet para que tu gatito nunca tenga sus patitas frías. Aprender a tejer ropa abrigada para este invierno, enseñar los fines de semana 🧶',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black87,
@@ -324,43 +253,6 @@ class _DetalleSolicitudScreenState extends State<DetalleSolicitudScreen> {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withAlpha((0.3 * 255).round()),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentBottomNavIndex,
-          onTap: _onBottomNavTapped,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF2196F3),
-          unselectedItemColor: Colors.grey,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Inicio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.explore),
-              label: 'Explorar',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              label: 'Chats',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Mi Perfil',
-            ),
-          ],
-        ),
       ),
     );
   }

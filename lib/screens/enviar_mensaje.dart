@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
-import 'package:convive_app/screens/enviar_solicitud.dart';
 import 'package:convive_app/screens/home.dart';
 import 'package:convive_app/screens/conversaciones_vecinos.dart';
 import 'package:convive_app/screens/perfil.dart';
@@ -34,17 +33,13 @@ class _EnviarMensajeScreenState extends State<EnviarMensajeScreen> {
 
   void _onBottomNavTapped(int index) {
     if (index == 0) {
-      // Inicio → EnviarSolicitudScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
-      );
-    } else if (index == 1) {
-      // Explorar → HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
+    } else if (index == 1) {
+      // Explorar → HomeScreen
+      
     } else if (index == 2) {
       // Chats → ConversacionesVecinosScreen
       Navigator.pushReplacement(
