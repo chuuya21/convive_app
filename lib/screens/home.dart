@@ -160,7 +160,7 @@ setState(() {});
                 value: 'cerrar_sesion',
                 child: Row(
                   children: [
-                    Icon(Icons.logout, color: Colors.red),
+                    Icon(Icons.logout, color: Colors.black54),
                     SizedBox(width: 8),
                     Text('Cerrar sesión'),
                   ],

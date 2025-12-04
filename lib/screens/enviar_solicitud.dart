@@ -20,6 +20,9 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
   String? _tipoAyudaSeleccionado;
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _detallesController = TextEditingController();
+  final List<File> _imagenesSeleccionadas = [];
+  final ImagePicker _imagePicker = ImagePicker();
+  bool _subiendoImagenes = false;
   // bool _esUrgente = false;
 
   final List<Map<String, dynamic>> _tiposAyuda = [
@@ -73,7 +76,130 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
         _detallesController.text.trim().isNotEmpty;
   }
 
-  
+  Future<void> _seleccionarImagenes() async {
+    if (!mounted) return;
+    
+    try {
+      List<XFile> imagenes = [];
+      
+      // Intentar usar pickMultiImage
+      try {
+        imagenes = await _imagePicker.pickMultiImage();
+      } catch (e) {
+        // Si pickMultiImage no está disponible, usar pickImage
+        final XFile? imagen = await _imagePicker.pickImage(
+          source: ImageSource.gallery,
+        );
+        if (imagen != null) {
+          imagenes = [imagen];
+        }
+      }
+      
+      if (imagenes.isNotEmpty && mounted) {
+        setState(() {
+          _imagenesSeleccionadas.addAll(imagenes.map((xFile) => File(xFile.path)).toList());
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al seleccionar imágenes: $e')),
+        );
+      }
+    }
+  }
+
+  Future<List<String>> _subirImagenes() async {
+    if (_imagenesSeleccionadas.isEmpty) {
+      return [];
+    }
+
+    if (!mounted) return [];
+
+    setState(() {
+      _subiendoImagenes = true;
+    });
+
+    final List<String> urls = [];
+    
+    try {
+      final storage = FirebaseStorage.instance;
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid ?? 'anonymous';
+
+      for (int i = 0; i < _imagenesSeleccionadas.length; i++) {
+        final imagen = _imagenesSeleccionadas[i];
+        
+        // Verificar que el archivo existe
+        if (!await imagen.exists()) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('El archivo de imagen ${i + 1} no existe')),
+            );
+          }
+          continue;
+        }
+
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final nombreArchivo = 'solicitudes/$userId/${timestamp}_$i.jpg';
+        
+        try {
+          final ref = storage.ref(nombreArchivo);
+          
+          // Subir el archivo con metadata
+          final uploadTask = ref.putFile(
+            imagen,
+            SettableMetadata(
+              contentType: 'image/jpeg',
+              customMetadata: {
+                'uploadedBy': userId,
+                'uploadedAt': DateTime.now().toIso8601String(),
+              },
+            ),
+          );
+
+          // Esperar a que termine la subida
+          final snapshot = await uploadTask;
+          
+          // Verificar que la subida fue exitosa
+          if (snapshot.state == TaskState.success) {
+            // Usar la referencia del snapshot para obtener la URL
+            final url = await snapshot.ref.getDownloadURL();
+            urls.add(url);
+          } else {
+            throw Exception('Error al subir la imagen: ${snapshot.state}');
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error al subir imagen ${i + 1}: $e')),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error general al subir imágenes: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _subiendoImagenes = false;
+        });
+      }
+    }
+
+    return urls;
+  }
+
+  void _eliminarImagen(int index) {
+    if (!mounted) return;
+    setState(() {
+      _imagenesSeleccionadas.removeAt(index);
+    });
+  }
 
   void _publicarSolicitud() async {
     if (_tipoAyudaSeleccionado == null) {
@@ -104,6 +230,9 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     }
 
     try {
+      // Subir imágenes primero si hay alguna
+      final List<String> urlsImagenes = await _subirImagenes();
+
       // Obtener el usuario actual
       final user = FirebaseAuth.instance.currentUser;
       final userId = user?.uid ?? '';
@@ -116,6 +245,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
         'detalles': _detallesController.text.trim(),
         'userId': userId,
         'userEmail': userEmail,
+        'imagenes': urlsImagenes,
         'timestamp': FieldValue.serverTimestamp(),
         'estado': 'pendiente', // pendiente, en_proceso, completada
       });
@@ -125,6 +255,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
         _tipoAyudaSeleccionado = null;
         _tituloController.clear();
         _detallesController.clear();
+        _imagenesSeleccionadas.clear();
       });
 
       if (mounted) {
@@ -375,25 +506,67 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Se específico pero breve',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+          
+          const SizedBox(height: 8),
+          // Botón para seleccionar imágenes
+          OutlinedButton.icon(
+            onPressed: _subiendoImagenes ? null : _seleccionarImagenes,
+            icon: const Icon(Icons.add_photo_alternate),
+            label: const Text('Agregar imagen'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: cs.secondary,
+              side: BorderSide(color: cs.secondary, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
               ),
-              Text(
-                '${_detallesController.text.length}/500',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
+              padding: const EdgeInsets.all(12),
             ),
+          ),
+          const SizedBox(height: 12),
+          // Mostrar imágenes seleccionadas
+          if (_imagenesSeleccionadas.isNotEmpty)
+            SizedBox(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _imagenesSeleccionadas.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            image: DecorationImage(
+                              image: FileImage(_imagenesSeleccionadas[index]),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.black54,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(Icons.close, size: 16, color: Colors.white),
+                              onPressed: () => _eliminarImagen(index),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          const SizedBox(height: 24),
+          
           const SizedBox(height: 24),
 
           const SizedBox(height: 32),
@@ -403,7 +576,7 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: _isFormValid() ? _publicarSolicitud : null,
+              onPressed: (_isFormValid() && !_subiendoImagenes) ? _publicarSolicitud : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _isFormValid() ? cs.primary : Colors.grey[400],
                 foregroundColor: Colors.white,
@@ -414,7 +587,29 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
                 ),
                 elevation: _isFormValid() ? 2 : 0,
               ),
-              child: Row(
+              child: _subiendoImagenes
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Subiendo imágenes...',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Text(
