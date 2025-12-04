@@ -102,35 +102,9 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: cs.primary,
+        backgroundColor: cs.secondary,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text('Ofrecer Servicio', style: TextStyle(color: Colors.white)),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const OfrecerScreen()),
-                );
-              },
-              child: AbsorbPointer(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Buscar productos...',
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
@@ -376,7 +350,8 @@ class _OfrecerScreenState extends State<OfrecerScreen> {
                     _esUrgente = value;
                   });
                 },
-                activeThumbColor: cs.tertiary, // Morado
+                activeThumbColor: cs.secondary,
+                activeTrackColor: cs.secondaryContainer, 
               ),
             ],
           ),

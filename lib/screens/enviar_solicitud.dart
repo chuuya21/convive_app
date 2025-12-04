@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:convive_app/screens/home.dart';
 
 class EnviarSolicitudScreen extends StatefulWidget {
@@ -160,35 +163,10 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: cs.primary,
+        backgroundColor: cs.secondary,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text('Solicitar Servicio', style: TextStyle(color: Colors.white)),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
-                );
-              },
-              child: AbsorbPointer(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Buscar productos...',
-                    fillColor: Colors.white,
-                    filled: true,
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+        
       ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
@@ -415,34 +393,9 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
                 ),
               ),
             ],
-          ),
+            ),
           const SizedBox(height: 24),
 
-          // Toggle: Solicitud urgente (comentado — se movió a ofrecer.dart con lógica Firestore)
-          /* 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Solicitud urgente',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-              Switch(
-                value: _esUrgente,
-                onChanged: (value) {
-                  setState(() {
-                    _esUrgente = value;
-                  });
-                },
-                activeColor: const Color(0xFF9C27B0), // Morado
-              ),
-            ],
-          ),
-          */
           const SizedBox(height: 32),
 
           // Botón: Publicar Solicitud
@@ -462,19 +415,19 @@ class _EnviarSolicitudScreenState extends State<EnviarSolicitudScreen> {
                 elevation: _isFormValid() ? 2 : 0,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    'Publicar Solicitud',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'Publicar Solicitud',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_forward, size: 20),
+                      ],
                     ),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward, size: 20),
-                ],
-              ),
             ),
           ),
           const SizedBox(height: 16),

@@ -305,14 +305,6 @@ class _ConversacionesVecinosScreenState
               ),
             ),
             const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.white, size: 20),
-              onPressed: () {
-                // Acción para editar/componer
-              },
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
           ],
         ),
         centerTitle: true,
@@ -729,7 +721,7 @@ class _ConversacionesVecinosScreenState
                                                   value: 'edit',
                                                   child: Row(
                                                     children: [
-                                                      Icon(Icons.edit, size: 20, color: cs.secondary),
+                                                      Icon(Icons.edit, size: 20, color: Colors.black54),
                                                       const SizedBox(width: 8),
                                                       const Text('Editar'),
                                                     ],
@@ -739,7 +731,7 @@ class _ConversacionesVecinosScreenState
                                                   value: 'delete',
                                                   child: Row(
                                                     children: [
-                                                      const Icon(Icons.delete, size: 20, color: Colors.red),
+                                                      const Icon(Icons.delete, size: 20, color: Colors.black54),
                                                       const SizedBox(width: 8),
                                                       const Text('Eliminar'),
                                                     ],

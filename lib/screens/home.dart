@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:convive_app/screens/enviar_solicitud.dart';
@@ -259,18 +260,18 @@ setState(() {});
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_selectedSegment == 0) {
-            // Pedir servicio → EnviarSolicitudScreen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
-            );
-          } else {
-            // Ofrecer servicio → OfrecerScreen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const OfrecerScreen()),
-            );
+            if (_selectedSegment == 0) {
+              // Pedir servicio → EnviarSolicitudScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const EnviarSolicitudScreen()),
+                  );
+            } else {
+              // Ofrecer servicio → OfrecerScreen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OfrecerScreen()),
+              );
           }
         },
         backgroundColor: cs.secondary,
@@ -415,6 +416,8 @@ setState(() {});
             // Nombre fijo para todas las publicaciones
             final nombreUsuario = 'Julian Gómez';
             
+            final imagenes = data['imagenes'] as List<dynamic>? ?? [];
+            
             final item = {
               'id': doc.id,
               'nombre': nombreUsuario,
@@ -425,6 +428,7 @@ setState(() {});
               'categorias': [labelTipo],
               'imagen': icono,
               'color': color,
+              'imagenes': imagenes.map((e) => e.toString()).toList(),
             };
             
             return _buildCard(item, true);
@@ -563,17 +567,46 @@ setState(() {});
 
           const SizedBox(height: 12),
 
-          // Imagen placeholder
-          Container(
-            height: 200,
-            width: double.infinity,
-            color: Colors.grey[200],
-            child: Icon(
-              item['imagen'] as IconData,
-              size: 60,
-              color: Colors.grey[400],
+          // Imágenes (si existen) o placeholder
+          if (item.containsKey('imagenes') && (item['imagenes'] as List).isNotEmpty)
+            SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: PageView.builder(
+                itemCount: (item['imagenes'] as List).length,
+                itemBuilder: (context, index) {
+                  return CachedNetworkImage(
+                    imageUrl: (item['imagenes'] as List)[index],
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[200],
+                      child: Icon(
+                        item['imagen'] as IconData,
+                        size: 60,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
+          else
+            Container(
+              height: 200,
+              width: double.infinity,
+              color: Colors.grey[200],
+              child: Icon(
+                item['imagen'] as IconData,
+                size: 60,
+                color: Colors.grey[400],
+              ),
             ),
-          ),
 
           const SizedBox(height: 12),
 
